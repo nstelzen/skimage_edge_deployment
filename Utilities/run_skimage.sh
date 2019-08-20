@@ -13,6 +13,7 @@ xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
 docker run \
     --net=host \
     --ipc=host \
+    -it \
     -e DISPLAY=$DISPLAY \
     -e TZ="Europe/Paris" \
     -v $XSOCK:$XSOCK \
@@ -23,8 +24,7 @@ docker run \
     -v /etc/timezone:/etc/timezone:ro \
     --rm \
     nickstelzenmuller/skimage:ARM_prod \
-    python3 \
-    python_src/skimage_edge.py
+    bash
 
 xhost -local:docker
 
