@@ -15,13 +15,13 @@ docker run \
     --ipc=host \
     -it \
     -e DISPLAY=$DISPLAY \
-    -e TZ="Europe/Paris" \
+    -e "TZ=Europe/Paris" \
     -v $XSOCK:$XSOCK \
     -v $XAUTH:$XAUTH \
     -e XAUTHORITY=$XAUTH \
     -v /home/odroid/skimage_edge_deployment:/home \
-    -v /etc/localtime:/etc/localtime:ro \
     -v /etc/timezone:/etc/timezone:ro \
+    -v /etc/localtime:/etc/localtime:ro \
     --rm \
     --workdir /home \
     nickstelzenmuller/skimage:ARM_prod \
