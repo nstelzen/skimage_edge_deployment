@@ -6,7 +6,6 @@ import startup_checks
 
 # Import external modules
 import logging
-# import cv2
 import pickle
 import pandas as pd
 import numpy as np
@@ -16,8 +15,12 @@ from collections import namedtuple
 import shutil
 import time
 import random
+import os
 
-import Detect_and_Track_ARM as cpp_fun
+if os.uname().machine == 'x86_64':
+    import Detect_and_Track_x86 as cpp_fun
+else:
+    import Detect_and_Track_ARM as cpp_fun
 
 # Core program:
 #   -Does object detection
@@ -39,7 +42,7 @@ class CameraCore:
 
         # Set parameters for this camera
         self.parameters = parameters
-
+        self.active = True
         # Basic attributes
         self.sensor_id = self.parameters['Sensor_ID']
         self.debug_mode = self.parameters['Debug_Mode']
@@ -87,10 +90,6 @@ class CameraCore:
         self.detect_and_track = cpp_fun.DetectAndTrack(parameters)
         self.detect_and_track.initialize_camera()
         self.detect_and_track.setup_RoI(parameters['ROI'])
-        # self.background = image_processing.initialize_background(self.parameters)
-        # self.cut_lines = image_processing.initialize_cut_line(self.parameters)
-        # __, self.ROI_mask = image_processing.initialize_roi_mask(self.parameters)
-
 
         for cut_line in self.cut_lines:
             self.lists_of_trackers_counted.append([])
@@ -100,9 +99,7 @@ class CameraCore:
         # Check to see that we are within business hours
         start_hour = self.parameters['Tracking_Start_Daily']
         stop_hour = self.parameters['Tracking_Stop_Daily']
-
         nowish = datetime.now()
-
         if nowish.hour >= start_hour and nowish.hour < stop_hour:
             do_tracking = True
         else:
@@ -110,7 +107,7 @@ class CameraCore:
 
             # Quit Skimage
             core_logger.info('Station is closed, quitting Skimage, see you tomorrow! ')
-            self.q_quit.put(True)
+            self.active = False
 
         # If station has just opened or just closed then log change
         if not do_tracking == self.station_is_open:
@@ -293,7 +290,7 @@ class CameraCore:
 
                 # This makes sure that we don't count the track if the last two positions of the track are not valid
                 # Todo: Clean this up, allow tracks that are valid before, valid after, but for whatever reason NOT valid at the line to still be counted
-                if (tracker.Valid[-2:]).all():
+                if all(tracker.Valid[-2:]):
                     # Check if track went over line
                     for idx, cut_line in enumerate(self.cut_lines):
                         # Check if any of the tracks crossed this line.
@@ -388,7 +385,6 @@ class CameraCore:
         states = self.detect_and_track.get_multitracker_states()
         valids = self.detect_and_track.get_valids()
         track_ids = self.detect_and_track.get_uuids()
-        # color = self.detect_and_track.get_track_colors()
   
         color = [random.randint(0,255), random.randint(0,255), random.randint(0,255)]
         self.multi_tracker = []
@@ -410,36 +406,6 @@ class CameraCore:
 
         return
     
-    # def display_video(self):
-
-    #     frame = np.array(self.detect_and_track.im_masked)
-    #     opacity = 0.7
-    #     track_mem = 60
-    #     height = frame.shape[0]
-    #     width = frame.shape[1]
-    #     overlay = frame.copy()  # for transparency
-
-    #     # Draw tracks for each tracker in multi_tracker
-    #     if self.multi_tracker:
-    #         for tracker in self.multi_tracker:
-
-    #             ind_last_valid = np.size(tracker.Valid) - np.argmax(tracker.Valid[:-track_mem:-1])
-    #             ind_first_valid = np.amax([0, ind_last_valid - track_mem])
-
-    #             cv2.polylines(overlay,
-    #                             [np.int32(tracker.Pos.T.reshape((-1, 1, 2))[ind_first_valid:ind_last_valid:, ::])],
-    #                             False,
-    #                             (255,50,0),
-    #                             5)
-
-    #             ind_last_valid = np.size(tracker.Valid) - np.argmax(tracker.Valid[:-track_mem:-1])
-    #             ind_first_valid = np.amax([0, ind_last_valid - track_mem])
-
-    #     overlay = cv2.addWeighted(overlay, opacity, frame, 1 - opacity, 0, frame)
-        
-    #     return frame
-
-
     def camera_tracking_loop(self):
         """Process images in a loop.
 
@@ -473,8 +439,7 @@ class CameraCore:
                                  ' the debugging feature.')
                 self.debug_mode = False
        
-
-        while True:
+        while self.active:
 
             # Check the time, if station is closed loop until station opens
             if not self.business_hours():
@@ -488,10 +453,11 @@ class CameraCore:
             if self.debug_mode:
                 debugger.test()
 
+
             # # ****** Recording # ******
             self.do_recording()
 
-        proc_time = time.time() - srt
+        # proc_time = time.time() - srt
         # print(f'Processing time = {proc_time}')
 
 
