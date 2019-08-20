@@ -249,7 +249,10 @@ def dimensionalize_parameters(params):
     def get_cut_line1(params):
         # Returns list of two element lists, each defining a point of boundary of the RoI in 
         # normalized image coordinates
-        cut_line1 = eval(params['Cut_Line1'])
+        if params['Cut_Line1']:
+            cut_line1 = eval(params['Cut_Line1'])
+        else:
+            cut_line1 = []
         return cut_line1
 
     # Factor used to change processing variables related to changing fps,(e.g. if we
