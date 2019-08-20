@@ -1,3 +1,7 @@
+# Set time zone
+sudo timedatectl set-timezone Europe/Paris
+
+# Install docker
 sudo apt-get remove docker docker-engine docker.io containerd runc
 
 sudo apt-get update

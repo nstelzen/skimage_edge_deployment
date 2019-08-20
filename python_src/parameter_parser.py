@@ -176,7 +176,6 @@ def checkvalid_string(var_str):
 def compose_camera_url(params):
 
 
-
     root_url = params['Camera_Path']
 
     # Allow for local videos
@@ -345,7 +344,7 @@ def get_parameters(param_filename, param_pickled_filename):
 
 
     try:
-        with open('../data/my_id.txt', 'r') as f:
+        with open('data/my_id.txt', 'r') as f:
             my_id = int(f.read())
 
     except IOError:

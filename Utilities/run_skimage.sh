@@ -23,6 +23,7 @@ docker run \
     -v /etc/localtime:/etc/localtime:ro \
     -v /etc/timezone:/etc/timezone:ro \
     --rm \
+    --workdir /home/skimage_edge_deployment \
     nickstelzenmuller/skimage:ARM_prod \
     bash
 
