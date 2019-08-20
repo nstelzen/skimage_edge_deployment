@@ -15,7 +15,7 @@ docker run \
     --ipc=host \
     -it \
     -e DISPLAY=$DISPLAY \
-    -e "TZ=Europe/Paris" \
+    -e "TZ=Asia/Kolkata" \
     -v $XSOCK:$XSOCK \
     -v $XAUTH:$XAUTH \
     -e XAUTHORITY=$XAUTH \
