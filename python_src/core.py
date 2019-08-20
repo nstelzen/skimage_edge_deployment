@@ -290,7 +290,7 @@ class CameraCore:
 
                 # This makes sure that we don't count the track if the last two positions of the track are not valid
                 # Todo: Clean this up, allow tracks that are valid before, valid after, but for whatever reason NOT valid at the line to still be counted
-                if all(tracker.Valid[-2:]):
+                if (tracker.Valid[-2:]).all():
                     # Check if track went over line
                     for idx, cut_line in enumerate(self.cut_lines):
                         # Check if any of the tracks crossed this line.
