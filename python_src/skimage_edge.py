@@ -16,8 +16,7 @@ import logging
 file_paths = startup_checks.check_filesystem()
 
 # Load parameters
-parameters = parameter_parser.get_parameters('data/skimage_parameters.xlsx',
-                                             'data/skimage_parameters.pickle')
+parameters = parameter_parser.get_parameters()
 
 if parameters['Debug_Mode']:
     print('Skimage starting in debug mode with the following parameters: \n')

@@ -279,24 +279,7 @@ def dimensionalize_parameters(params):
     params.update({'Cut_Line1': cut_line1})
     return params
 
-def get_parameters(param_filename, param_pickled_filename):
-    
-    # Fast loader, returns parameters from pickled file, skips loading from spreadsheet
-    if Path(param_pickled_filename).exists():
-        pickled_params_mtime = Path(param_pickled_filename).stat().st_mtime
-        params_mtime = Path(param_filename).stat().st_mtime
-        if pickled_params_mtime > params_mtime:
-            param_logger.info('Loading pickled parameters from previous session')
-            with open(param_pickled_filename, 'rb') as f:
-                parameters = pickle.load(f)
-            return parameters
-        else:
-            param_logger.info(param_filename + 
-                              ' was recently saved, so parameters will be loaded from this file')
-    else:
-        param_logger.info(param_pickled_filename + 
-                          ' not found, loading parameters from '
-                          + param_filename)
+def get_parameters_all(param_filename):
 
     # Enforce data types in parameter spreadsheet
     converters_dict = {
@@ -343,20 +326,8 @@ def get_parameters(param_filename, param_pickled_filename):
     # https://pandas.pydata.org/pandas-docs/stable/generated/pandas.read_excel.html
 
 
-    try:
-        with open('data/my_id.txt', 'r') as f:
-            my_id = int(f.read())
 
-    except IOError:
-        param_logger.critical('The file "data/my_id.txt" was not found. \n'
-                              'Please ensure that this file exists, and contains a string \n'
-                              'corresponding to one of the Sensor_ID\'s found in the \n' 
-                              'skimage_parameters.xlsx spreadsheet')
-        sys.exit(0)
-
-
-
-        # First we need to find the last row of the list of active sensors
+    # First we need to find the last row of the list of active sensors
     # Read in first column of spreadsheet:
     df_first_column = pandas.read_excel(param_filename,
                                         sheet_name=0,
@@ -398,6 +369,54 @@ def get_parameters(param_filename, param_pickled_filename):
 
     parameters_all = df.to_dict(orient='records')
 
+    return parameters_all
+
+
+def get_parameters(param_filename = 'data/skimage_parameters.xlsx',
+                  param_pickled_filename = 'data/skimage_parameters.pickle',
+                  roi_selector = False):
+    
+    # If roi_selector flag is set to true we read the exel file and return 
+    # all of the parameters
+    if roi_selector:
+        parameters_all = get_parameters_all(param_filename)
+        return parameters_all
+    
+    # Fast loader, returns parameters from pickled file if the pickled file was saved
+    # at a later time than the spreadsheet. Skips loading from spreadsheet
+    if Path(param_pickled_filename).exists():
+        pickled_params_mtime = Path(param_pickled_filename).stat().st_mtime
+        params_mtime = Path(param_filename).stat().st_mtime
+        if pickled_params_mtime > params_mtime:
+            param_logger.info('Loading pickled parameters from previous session')
+            with open(param_pickled_filename, 'rb') as f:
+                parameters = pickle.load(f)
+            return parameters
+        else:
+            param_logger.info(param_filename + 
+                              ' was recently saved, so parameters will be loaded from this file')
+    else:
+        param_logger.info(param_pickled_filename + 
+                          ' not found, loading parameters from '
+                          + param_filename)
+
+    
+    # First, check that we have a vaild my_id.txt file and read in the id
+    try:
+        with open('data/my_id.txt', 'r') as f:
+            my_id = int(f.read())
+
+    except IOError:
+        param_logger.critical('The file "data/my_id.txt" was not found. \n'
+                              'Please ensure that this file exists, and contains a string \n'
+                              'corresponding to one of the Sensor_ID\'s found in the \n' 
+                              'skimage_parameters.xlsx spreadsheet')
+        sys.exit(0)
+
+    # Now get all the parameters
+    parameters_all = get_parameters_all(param_filename)
+
+    # Select the parameters corresponding to my_id
     parameters = {}
     for params in parameters_all:
         if params['Sensor_ID'] == my_id:
@@ -418,7 +437,6 @@ def get_parameters(param_filename, param_pickled_filename):
 
     return parameters
 
-    
 if __name__ == '__main__':
     param_filename = '/home/data/skimage_parameters.xlsx'
     parameters = get_parameters(param_filename)
