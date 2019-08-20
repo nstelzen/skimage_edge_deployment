@@ -24,7 +24,7 @@ docker run \
     --rm \
     nickstelzenmuller/skimage:ARM_prod \
     python3 \
-    skimage_edge.py
+    python_src/skimage_edge.py
 
 xhost -local:docker
 
