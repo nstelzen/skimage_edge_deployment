@@ -246,14 +246,14 @@ def dimensionalize_parameters(params):
             roi_list = [[0,0], [0,1], [1,1], [1,0]]
         return roi_list
         
-    def get_cut_line1(params):
+    def get_cut_line(params, cut_line_string ):
         # Returns list of two element lists, each defining a point of boundary of the RoI in 
         # normalized image coordinates
-        if params['Cut_Line1']:
-            cut_line1 = eval(params['Cut_Line1'])
+        if params[cut_line_string]:
+            cut_line = eval(params[cut_line_string])
         else:
-            cut_line1 = []
-        return cut_line1
+            cut_line = []
+        return cut_line
 
     # Factor used to change processing variables related to changing fps,(e.g. if we
     # have to reduce the fps in half because of slow processing we can change the speed factor to 0.5
@@ -281,8 +281,11 @@ def dimensionalize_parameters(params):
     roi = get_roi(params)
     params.update({'ROI': roi})
 
-    cut_line1 = get_cut_line1(params)
-    params.update({'Cut_Line1': cut_line1})
+    for i in range(1,5):
+        cut_line_string = 'Cut_Line' + str(cut_line_number)
+        cut_line = get_cut_line(params, cut_line_string)
+        params.update({cut_line_string: cut_line})
+        
     return params
 
 def get_parameters_all(param_filename):
