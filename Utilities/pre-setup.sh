@@ -1,3 +1,6 @@
+# clone Github repo
+git clone https://github.com/nstelzen/skimage_edge_deployment.git
+
 # Set time zone
 sudo timedatectl set-timezone Europe/Paris
 
@@ -32,7 +35,7 @@ newgrp docker
 
 # Pull Docker image
 
-# clone Github repo
+
 
 # Set up link to skimage logs folder
 sudo ln -s /home/odroid/skimage_edge_deployment/Logs_SKIMAGE /home/odroid/Logs_SKIMAGE
