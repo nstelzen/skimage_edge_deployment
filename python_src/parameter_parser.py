@@ -240,7 +240,10 @@ def dimensionalize_parameters(params):
     def get_roi(params):
         # Returns list of two element lists, each defining a point of boundary of the RoI in 
         # normalized image coordinates
-        roi_list = eval(params['ROI'])
+        if params['ROI']:
+            roi_list = eval(params['ROI'])
+        else:
+            roi_list = [[0,0], [0,1], [1,1], [1,0]]
         return roi_list
         
     def get_cut_line1(params):
