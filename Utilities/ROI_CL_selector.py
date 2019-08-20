@@ -53,7 +53,7 @@ class Application(Frame):
         if not ExcelPath: # Annulé
             return
         try:
-            parameters_all = parameter_parser.get_parameters(ExcelPath,ExcelPath)
+            parameters_all = parameter_parser.get_parameters(ExcelPath,ExcelPath, roi_selector=True)
         except:
             messagebox.showerror('Error','Impossible de charger le fichier de paramètres')
             return

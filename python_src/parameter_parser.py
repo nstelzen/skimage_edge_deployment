@@ -356,7 +356,7 @@ def get_parameters_all(param_filename):
                            engine=None,
                            converters=converters_dict,
                            true_values=None,
-                           false_values=None,
+                           false_values=[''],
                            skiprows=0,
                            na_values=None,
                            parse_dates=False,
