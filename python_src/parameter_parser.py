@@ -282,7 +282,7 @@ def dimensionalize_parameters(params):
     params.update({'ROI': roi})
 
     for i in range(1,5):
-        cut_line_string = 'Cut_Line' + str(cut_line_number)
+        cut_line_string = 'Cut_Line' + str(i)
         cut_line = get_cut_line(params, cut_line_string)
         params.update({cut_line_string: cut_line})
         
