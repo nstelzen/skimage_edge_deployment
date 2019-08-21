@@ -3,7 +3,7 @@ Description=Starts Skimage watchdog
 After=docker.service
 
 [Service]
-ExecStart=/bin/bash /home/odroid/skimage_edge_deployment/Utilities/watchdog.sh
+ExecStart=/bin/bash /home/odroid/skimage_edge_deployment/Utilities/watchdog.sh > /home/odroid/test_log.txt
 
 [Install]
 WantedBy=multi-user.target
