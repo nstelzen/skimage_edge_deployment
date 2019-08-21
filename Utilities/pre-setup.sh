@@ -35,7 +35,16 @@ newgrp docker
 
 # Pull Docker image
 
-
+# Install docker-compose
+sudo apt install docker-compose
 
 # Set up link to skimage logs folder
+mkdir -p /home/odroid/skimage_edge_deployment/Logs_SKIMAGE 
 sudo ln -s /home/odroid/skimage_edge_deployment/Logs_SKIMAGE /home/odroid/Logs_SKIMAGE
+
+# Copy skimage_watchdog.service to /lib/systemd/system
+sudo cp /home/odroid/skimage_edge_deployment/Utilities/skimage_watchdog.service /lib/systemd/system
+# Enable service
+sudo systemctl daemon-reload
+sudo systemctl enable skimage_watchdog.service
+sudo systemctl start skimage_watchdog.service

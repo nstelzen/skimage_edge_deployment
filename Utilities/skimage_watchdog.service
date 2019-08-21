@@ -1,0 +1,9 @@
+[Unit]
+Description=Starts Skimage watchdog
+After=docker.service
+
+[Service]
+ExecStart=xfce4-terminal
+
+[Install]
+WantedBy=multi-user.target

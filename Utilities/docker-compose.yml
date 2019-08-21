@@ -1,0 +1,20 @@
+version: "3.7"
+services:
+  prod_ARM:
+    image: nickstelzenmuller/skimage:ARM_prod
+    privileged: true
+    container_name: prod_ARM
+
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - /tmp/.docker.xauth:/tmp/.docker.xauth
+      - /home/odroid/skimage_edge_deployment:/home
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+
+    working_dir: /home
+    
+    environment:
+    - TZ=Europe/Paris
+    - DISPLAY=$DISPLAY
+    - SSH_AUTH_SOCK=/tmp/ssh_auth_sock  
