@@ -10,8 +10,8 @@ function monitor_semaphore {
 }
 
 # run skimage, then restart skimage if there are any changes to the semaphore file
-xhost +local:root && \
-    docker-compose \
+xhost +local:root
+docker-compose \
     -f /home/odroid/skimage_edge_deployment/Utilities/docker-compose.yml \
     run --rm prod_ARM python python_src/skimage_edge.py
 
