@@ -1,4 +1,4 @@
-version: "3.7"
+version: "3.3"
 services:
   prod_ARM:
     image: nickstelzenmuller/skimage:ARM_prod
@@ -18,3 +18,4 @@ services:
     - TZ=Europe/Paris
     - DISPLAY=$DISPLAY
     - SSH_AUTH_SOCK=/tmp/ssh_auth_sock  
+
