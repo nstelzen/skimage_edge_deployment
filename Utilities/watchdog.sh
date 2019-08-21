@@ -13,8 +13,7 @@ function monitor_semaphore {
 xhost +local:root && \
     docker-compose \
     -f /home/odroid/skimage_edge_deployment/Utilities/docker-compose.yml \
-    --rm \
-    run prod_ARM python python_src/skimage_edge.py
+    run --rm prod_ARM python python_src/skimage_edge.py
 
 # Start monitoring the semphore file
 semaphore_dir="/home/odroid/skimage_edge_deployment/data/semaphore"
