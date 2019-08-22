@@ -290,8 +290,10 @@ def dimensionalize_parameters(params):
 
 def check_display(params):
 
-    param_logger.info('$DISPLAY=' + str(os.environ.get('DISPLAY')))
-    if not 'DISPLAY' in os.environ:
+    display = os.environ.get('DISPLAY')
+    param_logger.info('$DISPLAY=' + str(display))
+    
+    if not display:
         param_logger.info('$DISPLAY is not found on system, setting Display_Mode to false')
         params.update({'Display_Mode': False})
     
