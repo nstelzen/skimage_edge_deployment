@@ -16,7 +16,7 @@ services:
     
     environment:
     - TZ=Europe/Paris
-    - XAUTHORITY=/tmp/.docker.xauth-n 
+    - XAUTHORITY=/tmp/.docker.xauth 
     - DISPLAY=$DISPLAY
     - SSH_AUTH_SOCK=/tmp/ssh_auth_sock  
 
