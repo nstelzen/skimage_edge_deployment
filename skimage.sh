@@ -24,6 +24,11 @@ function monitor_semaphore {
 
 # Start Skimage
 # xhost +local:root
+xhost +local:docker
+XSOCK=/tmp/.X11-unix
+XAUTH=/tmp/.docker.xauth
+xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
+
 docker-compose \
     -f /home/odroid/skimage_edge_deployment/Utilities/docker-compose.yml \
     run --rm prod_ARM python python_src/skimage_edge.py
