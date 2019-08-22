@@ -7,7 +7,7 @@ services:
 
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
-      - /tmp/.docker.xauth-n:/tmp/.docker.xauth-n
+      - /tmp/.docker.xauth-n-n:/tmp/.docker.xauth-n-n
       - /home/odroid/skimage_edge_deployment:/home
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
