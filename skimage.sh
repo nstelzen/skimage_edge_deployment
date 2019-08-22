@@ -23,11 +23,11 @@ docker-compose \
 # docker-compose start_watchdog
 
 # Start Skimage
-xhost +local:root
-xhost +local:docker
-XSOCK=/tmp/.X11-unix
-XAUTH=/tmp/.docker.xauth-n
-xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
+# xhost +local:root
+# xhost +local:docker
+# XSOCK=/tmp/.X11-unix
+# XAUTH=/tmp/.docker.xauth-n
+# xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
 
 docker-compose \
     -f /home/odroid/skimage_edge_deployment/Utilities/docker-compose.yml \
