@@ -13,7 +13,7 @@ function monitor_semaphore {
 
 # Remove any containers left by a forced shutdown
 docker-compose \
-    -f /home/odroid/skimage_edge_deployment/Utilities/docker-compose.yml 
+    -f /home/odroid/skimage_edge_deployment/Utilities/docker-compose.yml \
     down
 
 
@@ -25,9 +25,9 @@ docker-compose \
 # Start Skimage
 # xhost +local:root
 # xhost +local:docker
-XSOCK=/tmp/.X11-unix
-XAUTH=/tmp/.docker.xauth-n
-xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
+# XSOCK=/tmp/.X11-unix
+# XAUTH=/tmp/.docker.xauth-n
+# xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
 
 docker-compose \
     -f /home/odroid/skimage_edge_deployment/Utilities/docker-compose.yml \
