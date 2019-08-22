@@ -16,6 +16,6 @@ services:
     
     environment:
     - TZ=Europe/Paris
-    - DISPLAY=$DISPLAY
+    - DISPLAY="127.0.0.1:10.0"
     - SSH_AUTH_SOCK=/tmp/ssh_auth_sock  
 
