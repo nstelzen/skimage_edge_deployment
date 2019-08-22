@@ -20,10 +20,4 @@ services:
     - DISPLAY=$DISPLAY
     - SSH_AUTH_SOCK=/tmp/ssh_auth_sock  
 
-    networks:
-      hostnet: {}
-
-networks:
-  hostnet:
-    external: true
-    name: host
+    network_mode: "host"
