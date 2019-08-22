@@ -11,6 +11,9 @@ function monitor_semaphore {
         ${semaphore_dir}
 }
 
+
+echo $USER
+
 # Remove any containers left by a forced shutdown
 docker-compose \
     -f /home/odroid/skimage_edge_deployment/Utilities/docker-compose.yml \
@@ -26,6 +29,7 @@ docker-compose \
 # xhost +local:root
 # xhost +local:docker
 # XSOCK=/tmp/.X11-unix
+
 XAUTH=/tmp/.docker.xauth
 xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
 
