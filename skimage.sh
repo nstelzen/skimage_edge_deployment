@@ -12,10 +12,10 @@ function monitor_semaphore {
 }
 
 # Remove any containers left by a forced shutdown
-# docker-compose \
-#     -f /home/odroid/skimage_edge_deployment/Utilities/docker-compose.yml 
-#     down
-# xhost -local:root
+docker-compose \
+    -f /home/odroid/skimage_edge_deployment/Utilities/docker-compose.yml 
+    down
+
 
 # Or just docker-compose up?
 
