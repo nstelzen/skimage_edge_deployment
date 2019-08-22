@@ -3,9 +3,9 @@ Description=Starts Skimage
 After=docker.service
 
 [Service]
-# User=odroid
-# Environment=XAUTHORITY=/home/odroid/.Xauthority
-# Environment=DISPLAY=:10.0
+User=odroid
+Environment=XAUTHORITY=/home/odroid/.Xauthority
+Environment=DISPLAY=:10.0
 ExecStart=/home/odroid/skimage_edge_deployment/skimage.sh
 
 [Install]

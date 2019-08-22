@@ -2,7 +2,7 @@
 git clone https://github.com/nstelzen/skimage_edge_deployment.git
 
 # Allow watchdog.sh to be executable 
-chmod +x /home/odroid/skimage_edge_deployment/Utilities/watchdog.sh
+chmod +x /home/odroid/skimage_edge_deployment/skimage.sh
 
 # Set time zone
 sudo timedatectl set-timezone Europe/Paris
