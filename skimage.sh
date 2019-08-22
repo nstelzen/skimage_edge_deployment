@@ -26,8 +26,8 @@ docker-compose \
 # xhost +local:root
 # xhost +local:docker
 # XSOCK=/tmp/.X11-unix
-# XAUTH=/tmp/.docker.xauth-n
-# xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
+# XAUTH=
+xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f /tmp/.docker.xauth-n nmerge -
 
 docker-compose \
     -f /home/odroid/skimage_edge_deployment/Utilities/docker-compose.yml \
