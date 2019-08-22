@@ -7,7 +7,7 @@ services:
 
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
-      - /tmp/.docker.xauth:/tmp/.docker.xauth
+      - /tmp/.docker.xauth-n:/tmp/.docker.xauth-n
       - /home/odroid/skimage_edge_deployment:/home
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
@@ -16,8 +16,8 @@ services:
     
     environment:
     - TZ=Europe/Paris
-    - XAUTHORITY=/tmp/.docker.xauth
+    - XAUTHORITY=/tmp/.docker.xauth-n 
     - DISPLAY=$DISPLAY
-    - SSH_AUTH_SOCK=/tmp/ssh_auth_sock  
+    # - SSH_AUTH_SOCK=/tmp/ssh_auth_sock  
 
     network_mode: "host"
