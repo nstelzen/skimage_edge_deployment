@@ -11,8 +11,10 @@ function monitor_semaphore {
         ${semaphore_dir}
 }
 
-
-echo $USER
+if [ "$USER" == "odroid" ]
+  then echo "Please run as root"
+  exit
+fi
 
 # Remove any containers left by a forced shutdown
 docker-compose \
