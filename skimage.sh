@@ -28,9 +28,10 @@ function monitor_semaphore {
 XSOCK=/tmp/.X11-unix
 XAUTH=/tmp/.docker.xauth-n
 xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
+
 docker-compose \
     -f /home/odroid/skimage_edge_deployment/Utilities/docker-compose.yml \
-    run --rm prod_ARM python python_src/skimage_edge.py
+    run --rm prod_ARM bash
 
 # Start monitoring the semphore file
 semaphore_dir="/home/odroid/skimage_edge_deployment/data/semaphore"
