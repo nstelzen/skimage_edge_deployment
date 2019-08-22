@@ -26,7 +26,7 @@ function monitor_semaphore {
 # xhost +local:root
 xhost +local:docker
 XSOCK=/tmp/.X11-unix
-XAUTH=/tmp/.docker.xauth
+XAUTH=/tmp/.docker.xauth-n
 xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
 
 docker-compose \
