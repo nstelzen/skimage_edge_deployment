@@ -20,4 +20,4 @@ services:
     - DISPLAY=$DISPLAY
     # - SSH_AUTH_SOCK=/tmp/ssh_auth_sock  
 
-    network_mode: "host"
+    # network_mode: "host"
