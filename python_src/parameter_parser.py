@@ -289,9 +289,12 @@ def dimensionalize_parameters(params):
     return params
 
 def check_display(params):
+
+    param_logger.info('$DISPLAY=' + str(os.environ.get('DISPLAY')))
     if not 'DISPLAY' in os.environ:
         param_logger.info('$DISPLAY is not found on system, setting Display_Mode to false')
         params.update({'Display_Mode': False})
+    
     return params
 
 def get_parameters_all(param_filename):
