@@ -23,8 +23,8 @@ docker-compose \
 # docker-compose start_watchdog
 
 # Start Skimage
-# xhost +local:root
-# xhost +local:docker
+xhost +local:root
+xhost +local:docker
 XSOCK=/tmp/.X11-unix
 XAUTH=/tmp/.docker.xauth-n
 xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
