@@ -1,12 +1,12 @@
 [Unit]
-Description=Starts Skimage watchdog
+Description=Starts Skimage 
 After=docker.service
 
 [Service]
-User=odroid
-Environment=XAUTHORITY=/home/odroid/.Xauthority
+# User=odroid
+# Environment=XAUTHORITY=/home/odroid/.Xauthority
 # Environment=DISPLAY=:10.0
-ExecStart=/home/odroid/skimage_edge_deployment/Utilities/watchdog.sh >/home/odroid/test_log.txt 2>&1
+ExecStart=/home/odroid/skimage_edge_deployment/Utilities/watchdog.sh
 
 [Install]
 WantedBy=multi-user.target

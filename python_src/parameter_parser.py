@@ -288,6 +288,12 @@ def dimensionalize_parameters(params):
         
     return params
 
+def check_display(params):
+    if not 'DISPLAY' in os.environ:
+        param_logger.info('$DISPLAY is not found on system, setting Display_Mode to false')
+        params.update({'Display_Mode': False})
+    return params
+
 def get_parameters_all(param_filename):
 
     # Enforce data types in parameter spreadsheet
@@ -380,7 +386,6 @@ def get_parameters_all(param_filename):
 
     return parameters_all
 
-
 def get_parameters(param_filename = 'data/skimage_parameters.xlsx',
                   param_pickled_filename = 'data/skimage_parameters.pickle',
                   roi_selector = False):
@@ -400,6 +405,8 @@ def get_parameters(param_filename = 'data/skimage_parameters.xlsx',
             param_logger.info('Loading pickled parameters from previous session')
             with open(param_pickled_filename, 'rb') as f:
                 parameters = pickle.load(f)
+
+            parameters = check_display(parameters)
             return parameters
         else:
             param_logger.info(param_filename + 
@@ -444,6 +451,7 @@ def get_parameters(param_filename = 'data/skimage_parameters.xlsx',
     with open(param_pickled_filename, 'wb') as f:
         pickle.dump(parameters, f)
 
+    parameters = check_display(parameters)
     return parameters
 
 if __name__ == '__main__':

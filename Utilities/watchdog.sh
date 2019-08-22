@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# Start watchdog
-# docker-compose start_watchdog
+
 
 # Setup function to monitor semphore directory
 function monitor_semaphore {
@@ -17,6 +16,11 @@ docker-compose \
     -f /home/odroid/skimage_edge_deployment/Utilities/docker-compose.yml 
     down
 xhost -local:root
+
+# Or just docker-compose up?
+
+# Start watchdog
+# docker-compose start_watchdog
 
 # Start Skimage
 xhost +local:root
