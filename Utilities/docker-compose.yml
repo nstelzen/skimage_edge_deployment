@@ -1,6 +1,6 @@
 version: "3.3"
 services:
-  prod_ARM:
+  Skimage:
     image: nickstelzenmuller/skimage:ARM_prod
     privileged: true
     container_name: prod_ARM
@@ -26,7 +26,7 @@ services:
 
     network_mode: "host"
 
-  watchdog:
+  Watchdog:
     image: nickstelzenmuller/skimage:ARM_prod
     privileged: true
     container_name: watchdog

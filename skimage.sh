@@ -42,10 +42,6 @@ docker-compose \
     -f /home/odroid/skimage_edge_deployment/Utilities/docker-compose.yml \
     down
 
-# Start watchdog
-docker-compose \
-    -f /home/odroid/skimage_edge_deployment/Utilities/docker-compose.yml \
-    run --rm -d watchdog python python_src/watchdog.py
 
 # Set xauth for graphics display. If this causes problems, simply deleting
 # the xauth file /tmp/.docker.xauth* should fix it
@@ -57,8 +53,7 @@ xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
 # docker logs -f <container-name>
 docker-compose \
     -f /home/odroid/skimage_edge_deployment/Utilities/docker-compose.yml \
-    run --rm -d prod_ARM python python_src/skimage_edge.py
-
+    up -d 
 
 # While loop in bash calls "monitor_semaphore", then goes through the loop
 # if "monitor_semaphore" returns TRUE. Monitor semaphore returns TRUE only
@@ -67,15 +62,14 @@ docker-compose \
 # while loop never exits.
 while monitor_semaphore
 do  
-    echo "Semaphore received, stopping Skimage"
-    # Remove any containers left by a forced shutdown
-    docker-compose \
-    -f /home/odroid/skimage_edge_deployment/Utilities/docker-compose.yml \
-    down
 
-    
     if [ -f ${semaphore_dir}/RESET ]
     then
+        echo "Semaphore received, stopping Skimage"
+        # Remove any containers left by a forced shutdown
+        docker-compose \
+        -f /home/odroid/skimage_edge_deployment/Utilities/docker-compose.yml \
+        down
         echo "Exiting skimage.sh"
         exit 0
     
@@ -85,7 +79,7 @@ do
 
         docker-compose \
             -f /home/odroid/skimage_edge_deployment/Utilities/docker-compose.yml \
-            run --rm -d prod_ARM python python_src/skimage_edge.py
+            restart Skimage
     fi
     
 done
