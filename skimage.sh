@@ -43,7 +43,9 @@ docker-compose \
     down
 
 # Start watchdog
-# docker-compose start_watchdog
+docker-compose \
+    -f /home/odroid/skimage_edge_deployment/Utilities/docker-compose.yml \
+    run --rm -d watchdog python Utilities/watchdog.py
 
 # Set xauth for graphics display. If this causes problems, simply deleting
 # the xauth file /tmp/.docker.xauth* should fix it
