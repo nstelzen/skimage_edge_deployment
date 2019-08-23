@@ -69,7 +69,7 @@ do
     if [ -f ${semaphore_dir}/RESET ]
     then
         echo "Exiting skimage.sh"
-        exit 1
+        exit 0
     
     else
         # docker-compose start skimage
