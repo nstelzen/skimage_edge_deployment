@@ -26,7 +26,7 @@ do
         echo "Waiting for previously started skimage.sh to terminate . . ."
         wait ${pid_skimage}
     else
-        echo "Self PID ${PPID} is ${pid_skimage}"
+        echo "Self PID $$ is ${pid_skimage}"
     fi
 done
 echo "All previously started instances of Skimage have stopped, Skimage will now start"
