@@ -17,6 +17,7 @@ mkdir -p --mode=0777 ${semaphore_dir}
 touch "${semaphore_dir}/RESET"
 
 running_skimage_pids=($(pgrep -f skimage.sh))
+echo ${running_skimage_pids}
 for pid_skimage in ${running_skimage_pids}
 do
     if [${pid_skimage} != ${PPID}]
