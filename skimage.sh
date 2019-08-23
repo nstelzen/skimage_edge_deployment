@@ -22,7 +22,7 @@ do
     if [${pid_skimage} != $$]
     then
         echo "Waiting for previously started skimage.sh to terminate . . ."
-        wait pid
+        wait ${pid_skimage}
     fi
 done
 echo "All previously started instances of Skimage have stopped, Skimage will now start"
