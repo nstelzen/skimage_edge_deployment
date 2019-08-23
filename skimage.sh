@@ -43,6 +43,12 @@ docker-compose \
 # Start watchdog
 # docker-compose start_watchdog
 
+XAUTH=/tmp/.docker.xauth
+xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
+
+docker-compose \
+    -f /home/odroid/skimage_edge_deployment/Utilities/docker-compose.yml \
+    run --rm -d prod_ARM python python_src/skimage_edge.py
 
 
 # While loop in bash calls "monitor_semaphore", then goes through the loop
@@ -63,12 +69,10 @@ do
     then
         # docker-compose start skimage
         echo "Restarting Skimage"
-        XAUTH=/tmp/.docker.xauth
-        xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
 
         docker-compose \
             -f /home/odroid/skimage_edge_deployment/Utilities/docker-compose.yml \
-            run --rm prod_ARM python python_src/skimage_edge.py
+            run --rm -d prod_ARM python python_src/skimage_edge.py
     fi
     
 done
