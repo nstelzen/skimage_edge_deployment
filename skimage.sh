@@ -22,7 +22,8 @@ touch "${semaphore_dir}/RESET"
 # Wait until only one (this script) is found.
 running_skimage_pids=($(pgrep -f skimage.sh))
 while [ ${#running_skimage_pids[@]} -gt 1 ]
-do
+do  
+    echo "Waiting for previously started skimage.sh to terminate . . ."
     sleep 0.1
     running_skimage_pids=($(pgrep -f skimage.sh))
 done
