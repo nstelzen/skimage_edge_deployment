@@ -22,6 +22,7 @@ for pid_skimage in ${running_skimage_pids}
 do
     if [ ${pid_skimage} != ${PPID} ]
     then
+        echo "Self PID ${PPID} is not ${pid_skimage}"
         echo "Waiting for previously started skimage.sh to terminate . . ."
         wait ${pid_skimage}
     else
