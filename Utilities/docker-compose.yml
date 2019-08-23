@@ -3,7 +3,7 @@ services:
   Skimage:
     image: nickstelzenmuller/skimage:ARM_prod
     privileged: true
-    container_name: prod_ARM
+    container_name: skimage
 
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
