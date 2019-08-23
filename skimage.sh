@@ -14,7 +14,7 @@ function monitor_semaphore {
 # Start monitoring the semphore file
 semaphore_dir="/home/odroid/skimage_edge_deployment/data/semaphore"
 mkdir -p --mode=777 ${semaphore_dir}
-touch "${semaphore_dir}/RESET"; chmod a+rw "${semaphore_dir}/RESET"
+touch "${semaphore_dir}/RESET"
 
 running_skimage_pids=($(pgrep -f skimage.sh))
 echo ${running_skimage_pids}
@@ -34,7 +34,7 @@ echo "All previously started instances of Skimage have stopped, Skimage will now
 
 echo "Resetting semaphore directory"
 rm -r ${semaphore_dir}
-mkdir -p ${semaphore_dir}
+mkdir -p --mode=777 ${semaphore_dir}
 
 
 docker-compose \
