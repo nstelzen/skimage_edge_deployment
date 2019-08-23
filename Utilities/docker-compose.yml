@@ -21,3 +21,20 @@ services:
     # - SSH_AUTH_SOCK=/tmp/ssh_auth_sock  
 
     network_mode: "host"
+
+  watchdog:
+    image: nickstelzenmuller/skimage:ARM_prod
+    privileged: true
+    container_name: watchdog
+
+    volumes:
+      - /home/odroid/skimage_edge_deployment:/home
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+
+    working_dir: /home
+    
+    environment:
+    - TZ=Europe/Paris
+    
+    network_mode: "host"

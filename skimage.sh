@@ -30,19 +30,6 @@ do
     sleep 0.1
     running_skimage_pids=($(pgrep -f skimage.sh))
 done
-
-# for pid_skimage in ${running_skimage_pids}
-# do
-#     if [ ${pid_skimage} != $$ ]
-#     then
-#         echo "Self PID $$ is not ${pid_skimage}"
-#         echo "Waiting for previously started skimage.sh to terminate . . ."
-#         tail --pid=${pid_skimage} -f /dev/null
-
-#     else
-#         echo "Self PID $$ is ${pid_skimage}"
-#     fi
-# done
 echo "All previously started instances of Skimage have stopped, Skimage will now start"
 
 # Clear semaphore directory
