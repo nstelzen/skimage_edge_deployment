@@ -97,7 +97,7 @@ setup_logging()
 file_paths = startup_checks.check_filesystem()
 
 # Load parameters
-parameters = parameter_parser.get_parameters(file_paths['param'])
+parameters = parameter_parser.get_parameters()
 
 # Number of cycles between every check (1 cycle ~ 60s)
 sleep_time_periods = 5
