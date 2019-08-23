@@ -35,21 +35,13 @@ echo "Resetting semaphore directory"
 rm -r ${semaphore_dir}
 mkdir -p ${semaphore_dir}
 
-# Remove any containers left by a forced shutdown
+
 docker-compose \
     -f /home/odroid/skimage_edge_deployment/Utilities/docker-compose.yml \
     down
 
-
 # Start watchdog
 # docker-compose start_watchdog
-
-XAUTH=/tmp/.docker.xauth
-xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
-
-docker-compose \
-    -f /home/odroid/skimage_edge_deployment/Utilities/docker-compose.yml \
-    run --rm prod_ARM python python_src/skimage_edge.py
 
 
 
@@ -61,12 +53,22 @@ docker-compose \
 while monitor_semaphore
 do  
     echo "Semaphore received, stopping Skimage"
-    # docker-compose stop skimage
+    # Remove any containers left by a forced shutdown
+    docker-compose \
+    -f /home/odroid/skimage_edge_deployment/Utilities/docker-compose.yml \
+    down
+
     
     if [! -f ${semaphore_dir}/RESET]
     then
         # docker-compose start skimage
         echo "Restarting Skimage"
+        XAUTH=/tmp/.docker.xauth
+        xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
+
+        docker-compose \
+            -f /home/odroid/skimage_edge_deployment/Utilities/docker-compose.yml \
+            run --rm prod_ARM python python_src/skimage_edge.py
     fi
     
 done
