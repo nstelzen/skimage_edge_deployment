@@ -13,8 +13,8 @@ function monitor_semaphore {
 
 # Start monitoring the semphore file
 semaphore_dir="/home/odroid/skimage_edge_deployment/data/semaphore"
-mkdir -p --mode=0777 ${semaphore_dir}
-touch "${semaphore_dir}/RESET"; chmod 0777 "${semaphore_dir}/RESET"
+mkdir -p --mode=777 ${semaphore_dir}
+touch "${semaphore_dir}/RESET"; chmod 777 "${semaphore_dir}/RESET"
 
 running_skimage_pids=($(pgrep -f skimage.sh))
 echo ${running_skimage_pids}
