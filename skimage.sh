@@ -65,7 +65,7 @@ do
     down
 
     
-    if [! -f ${semaphore_dir}/RESET]
+    if [ ! -f ${semaphore_dir}/RESET ]
     then
         # docker-compose start skimage
         echo "Restarting Skimage"
