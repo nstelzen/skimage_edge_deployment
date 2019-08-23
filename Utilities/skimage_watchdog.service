@@ -5,7 +5,8 @@ After=docker.service
 [Service]
 Type=oneshot
 RemainAfterExit=false
-ExecStart=/home/odroid/skimage_edge_deployment/skimage.sh && /bin/rm -R /tmp/.docker.xauth
+ExecStart=/home/odroid/skimage_edge_deployment/skimage.sh
+ExecStartPost=/bin/rm -R /tmp/.docker.xauth
 
 [Install]
 WantedBy=multi-user.target
