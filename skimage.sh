@@ -68,6 +68,10 @@ do
     
     if [ ! -f ${semaphore_dir}/RESET ]
     then
+        echo "Exiting skimage.sh"
+        exit 1
+    
+    else
         # docker-compose start skimage
         echo "Restarting Skimage"
 
@@ -75,8 +79,8 @@ do
             -f /home/odroid/skimage_edge_deployment/Utilities/docker-compose.yml \
             run --rm -d prod_ARM python python_src/skimage_edge.py
 
-    else
-        exit 1
+    
+        
     fi
     
 done
