@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# Main bash script that starts up and manages Skimage
 
 
 # Setup function to monitor semphore directory
@@ -11,32 +11,42 @@ function monitor_semaphore {
         ${semaphore_dir}
 }
 
-# Start monitoring the semphore file
+# Make a "RESET" file in the semaphore directory
+# (and make the semaphore directory if it doesn't already exist)
+# This tells other instances of Skimage to shutdown
 semaphore_dir="/home/odroid/skimage_edge_deployment/data/semaphore"
 mkdir -p --mode=777 ${semaphore_dir}
 touch "${semaphore_dir}/RESET"
 
+# Check if other instances of Skimage are running.
+# Wait until only one (this script) is found.
 running_skimage_pids=($(pgrep -f skimage.sh))
-echo ${running_skimage_pids}
-for pid_skimage in ${running_skimage_pids}
+while [ ${#running_skimage_pids[@]} -gt 1 ]
 do
-    if [ ${pid_skimage} != $$ ]
-    then
-        echo "Self PID $$ is not ${pid_skimage}"
-        echo "Waiting for previously started skimage.sh to terminate . . ."
-        tail --pid=${pid_skimage} -f /dev/null
-
-    else
-        echo "Self PID $$ is ${pid_skimage}"
-    fi
+    sleep 0.1
+    running_skimage_pids=($(pgrep -f skimage.sh))
 done
+
+# for pid_skimage in ${running_skimage_pids}
+# do
+#     if [ ${pid_skimage} != $$ ]
+#     then
+#         echo "Self PID $$ is not ${pid_skimage}"
+#         echo "Waiting for previously started skimage.sh to terminate . . ."
+#         tail --pid=${pid_skimage} -f /dev/null
+
+#     else
+#         echo "Self PID $$ is ${pid_skimage}"
+#     fi
+# done
 echo "All previously started instances of Skimage have stopped, Skimage will now start"
 
+# Clear semaphore directory
 echo "Resetting semaphore directory"
 rm -r ${semaphore_dir}
 mkdir -p --mode=777 ${semaphore_dir}
 
-
+# Shutdown all docker containers that may be lingering, just in case
 docker-compose \
     -f /home/odroid/skimage_edge_deployment/Utilities/docker-compose.yml \
     down
@@ -44,9 +54,14 @@ docker-compose \
 # Start watchdog
 # docker-compose start_watchdog
 
+# Set xauth for graphics display. If this causes problems, simply deleting
+# the xauth file /tmp/.docker.xauth* should fix it
 XAUTH=/tmp/.docker.xauth
 xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
 
+# Start Skimage in detached mode.
+# If you want to see the terminal output use the command :
+# docker logs -f <container-name>
 docker-compose \
     -f /home/odroid/skimage_edge_deployment/Utilities/docker-compose.yml \
     run --rm -d prod_ARM python python_src/skimage_edge.py
@@ -78,9 +93,6 @@ do
         docker-compose \
             -f /home/odroid/skimage_edge_deployment/Utilities/docker-compose.yml \
             run --rm -d prod_ARM python python_src/skimage_edge.py
-
-    
-        
     fi
     
 done
