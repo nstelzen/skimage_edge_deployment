@@ -24,7 +24,8 @@ do
     then
         echo "Self PID $$ is not ${pid_skimage}"
         echo "Waiting for previously started skimage.sh to terminate . . ."
-        sleep 1
+        tail --pid=${pid_skimage} -f /dev/null
+        
     else
         echo "Self PID $$ is ${pid_skimage}"
     fi
