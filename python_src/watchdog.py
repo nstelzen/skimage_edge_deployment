@@ -16,7 +16,7 @@ def setup_logging():
     watchdog_logger.setLevel(logging.DEBUG)
 
     # create file handler which logs to file
-    logfile_dir = Path.cwd().parent / 'Logs_watchdog'
+    logfile_dir = Path.cwd() / 'Logs_watchdog'
     if not logfile_dir.is_dir():
         os.mkdir(logfile_dir)
     logfile_name = logfile_dir / (
@@ -41,11 +41,10 @@ def setup_logging():
     watchdog_logger.addHandler(fh)
     watchdog_logger.addHandler(ch)
 
-
 def in_business(current_time, parameter):
     # Check to see that we are within business hours
-    start_hour = parameter['trackingStartDaily']
-    stop_hour = parameter['trackingStopDaily']
+    start_hour = parameter['Tracking_Start_Daily']
+    stop_hour = parameter['Tracking_Stop_Daily']
 
     if current_time.hour >= start_hour and current_time.hour < stop_hour:
         station_open = True
@@ -54,10 +53,9 @@ def in_business(current_time, parameter):
 
     return station_open
 
-
 def sensor_pingable(parameter):
 
-    sensor_path = parameter['sensorPath']
+    sensor_path = parameter['Camera_Path']
     ping_status = startup_checks.check_ping(sensor_path)
 
     if ping_status['ping_status']:
@@ -69,7 +67,7 @@ def sensor_pingable(parameter):
 
 
 def logs_correct(parameter, sleep_time_periods, nowish):
-    sensor_id = parameter['sensorID']
+    sensor_id = parameter['Sensor_ID']
     skimage_log_dir = startup_checks.skimage_log_filepaths(sensor_id)
     list_of_files = glob.glob(str(skimage_log_dir / '*'))
 
@@ -81,7 +79,7 @@ def logs_correct(parameter, sleep_time_periods, nowish):
         lastlog_timestamp = datetime.now().replace(hour=0, minute=0, second=0)
 
     delta_time = nowish - lastlog_timestamp
-    sleep_time_param = sleep_time_periods * parameter['periodSkimageLog']
+    sleep_time_param = sleep_time_periods * parameter['Period_Skimage_Log']
 
     if delta_time.seconds < sleep_time_param:
         logs_correct = True
@@ -99,16 +97,13 @@ setup_logging()
 file_paths = startup_checks.check_filesystem()
 
 # Load parameters
-parameters = parameter_parser.get_all_parameters(file_paths['param'])
-parameters_all = parameters['parameters_all']
+parameters = parameter_parser.get_parameters(file_paths['param'])
 
 # Number of cycles between every check (1 cycle ~ 60s)
 sleep_time_periods = 5
 # Get initial value of sleep time
-periods_skimage_log = []
-[periods_skimage_log.append(int(param['periodSkimageLog'])) for param in parameters_all]
 
-max_period = max(periods_skimage_log)
+max_period = parameters['Period_Skimage_Log']
 sleep_time = max_period * sleep_time_periods
 
 while True:
@@ -116,61 +111,60 @@ while True:
     nowish = datetime.now()
 
     need_to_reboot = False
-    for param in parameters_all:
 
-        sensor_id = str(param['sensorID'])
+    sensor_id = str(parameters['Sensor_ID'])
 
-        # Is the station open? If so, check the status of the sensor.
-        if in_business(nowish, param):
-            watchdog_logger.info('Sensor ' + sensor_id + ' is within business hours')
+    # Is the station open? If so, check the status of the sensor.
+    if in_business(nowish, parameters):
+        watchdog_logger.info('Sensor ' + sensor_id + ' is within business hours')
 
-            #  Is the sensor pingable? If so, check the logs are up to date
-            if sensor_pingable(param):
+        #  Is the sensor pingable? If so, check the logs are up to date
+        if sensor_pingable(parameters):
 
-                watchdog_logger.info('Sensor ' + sensor_id + ' is pingable')
-                #  Are the logs up to date? If so, everything it is all good for this sensor
-                if logs_correct(param, sleep_time_periods, nowish):
+            watchdog_logger.info('Sensor ' + sensor_id + ' is pingable')
+            #  Are the logs up to date? If so, everything it is all good for this sensor
+            if logs_correct(parameters, sleep_time_periods, nowish):
 
-                    watchdog_logger.info('Sensor ' + sensor_id + ' logs are up to date')
-                    need_to_reboot = False
+                watchdog_logger.info('Sensor ' + sensor_id + ' logs are up to date')
+                need_to_reboot = False
 
-                # If we are in business hours and the sensor is pingable but the logs are not up to date there is a
-                # problem, and we need to restart ...
-                # Todo: We can imagine that the sensor is pingable but it is not operating correctly...
-                else:
-
-                    watchdog_logger.warning('Logs not recording correctly for sensor '
-                                            + str(param['sensorID'])
-                                            + ' despite being business hours and sensor is pingable. Restarting Skimage')
-                    need_to_reboot = True
-
-            # If the sensor is not pingable, we don't worry about checking the logs
+            # If we are in business hours and the sensor is pingable but the logs are not up to date there is a
+            # problem, and we need to restart ...
+            # Todo: We can imagine that the sensor is pingable but it is not operating correctly...
             else:
 
-                watchdog_logger.warning('Sensor ' + str(param['sensorID']) + ' is NOT pingable!')
+                watchdog_logger.warning('Logs not recording correctly for sensor '
+                                        + str(parameters['Sensor_ID'])
+                                        + ' despite being business hours and sensor is pingable. Restarting Skimage')
+                need_to_reboot = True
 
-        #  If the station is closed, we don't worry about checking the sensor or the logs
+        # If the sensor is not pingable, we don't worry about checking the logs
         else:
 
-            watchdog_logger.info('Station is closed')
+            watchdog_logger.warning('Sensor ' + str(parameters['Sensor_ID']) + ' is NOT pingable!')
 
-        #  If we need to reboot,
-        if need_to_reboot:
-            watchdog_logger.error('Resetting docker')
+    #  If the station is closed, we don't worry about checking the sensor or the logs
+    else:
 
-            # Check semaphore directory
-            parameters_filepath = file_paths['param']
-            semaphore_dir = parameters_filepath.parent / 'semaphore'  # this should be data/semaphore
-            if not semaphore_dir.is_dir():
-                os.mkdir(semaphore_dir)
+        watchdog_logger.info('Station is closed')
 
-            semaphore = semaphore_dir / 'semaphore'
-            with open(semaphore, 'a') as f:
-                f.write('Restarting signal \n')
+    #  If we need to reboot,
+    if need_to_reboot:
+        watchdog_logger.error('Resetting docker')
 
-            watchdog_logger.info('Monitoring the newly reset Skimage. Will recheck in '
-                                 + str(sleep_time) + ' seconds')
-            break
+        # Check semaphore directory
+        parameters_filepath = file_paths['param']
+        semaphore_dir = parameters_filepath.parent / 'semaphore'  # this should be data/semaphore
+        if not semaphore_dir.is_dir():
+            os.mkdir(semaphore_dir)
+
+        semaphore = semaphore_dir / 'semaphore'
+        with open(semaphore, 'a') as f:
+            f.write('Restarting signal \n')
+
+        watchdog_logger.info('Monitoring the newly reset Skimage. Will recheck in '
+                                + str(sleep_time) + ' seconds')
+        break
 
 
     # Todo: some kind of check/reload if parameter file has been changed
