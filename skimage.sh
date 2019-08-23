@@ -66,7 +66,7 @@ do
     down
 
     
-    if [ ! -f ${semaphore_dir}/RESET ]
+    if [ -f ${semaphore_dir}/RESET ]
     then
         echo "Exiting skimage.sh"
         exit 1
