@@ -4,7 +4,7 @@ import logging
 import os
 from datetime import datetime
 import subprocess
-# import pingparsing
+import pingparsing
 
 
 module_logger = logging.getLogger('skimage.startup_checks')
