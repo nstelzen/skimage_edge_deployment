@@ -3,10 +3,10 @@ Description=Starts Skimage
 After=docker.service
 
 [Service]
-# User=odroid
-# Environment=XAUTHORITY=/home/odroid/.Xauthority
-# Environment=DISPLAY=:10.0
+Type=oneshot
+RemainAfterExit=false
 ExecStart=/home/odroid/skimage_edge_deployment/skimage.sh
+ExecStartPost rm -R /tmp/.docker.xauth*
 
 [Install]
 WantedBy=multi-user.target
