@@ -25,7 +25,7 @@ do
         echo "Self PID $$ is not ${pid_skimage}"
         echo "Waiting for previously started skimage.sh to terminate . . ."
         tail --pid=${pid_skimage} -f /dev/null
-        
+
     else
         echo "Self PID $$ is ${pid_skimage}"
     fi
@@ -74,6 +74,9 @@ do
         docker-compose \
             -f /home/odroid/skimage_edge_deployment/Utilities/docker-compose.yml \
             run --rm -d prod_ARM python python_src/skimage_edge.py
+
+    else
+        exit 1
     fi
     
 done
