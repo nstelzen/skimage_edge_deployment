@@ -17,9 +17,9 @@ mkdir -p --mode=0777 ${semaphore_dir}
 touch "${semaphore_dir}/RESET"
 
 running_skimage_pids=($(pgrep -f skimage.sh))
-for pid in running_skimage_pids
+for pid_skimage in ${running_skimage_pids}
 do
-    if [pid != $0]
+    if [${pid_skimage} != $$]
     then
         echo "Waiting for previously started skimage.sh to terminate . . ."
         wait pid
