@@ -18,7 +18,11 @@ services:
     - TZ=Europe/Paris
     - XAUTHORITY=/tmp/.docker.xauth 
     - DISPLAY=$DISPLAY
-    # - SSH_AUTH_SOCK=/tmp/ssh_auth_sock  
+    # - SSH_AUTH_SOCK=/tmp/ssh_auth_sock
+
+    entrypoint:
+      - python
+      - python_src/skimage_edge.py  
 
     network_mode: "host"
 
@@ -36,5 +40,9 @@ services:
     
     environment:
     - TZ=Europe/Paris
-    
+
+    entrypoint:
+      - python
+      - python_src/watchdog.py
+
     network_mode: "host"
