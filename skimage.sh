@@ -20,7 +20,7 @@ running_skimage_pids=($(pgrep -f skimage.sh))
 echo ${running_skimage_pids}
 for pid_skimage in ${running_skimage_pids}
 do
-    if [${pid_skimage} != ${PPID}]
+    if [ ${pid_skimage} != ${PPID} ]
     then
         echo "Waiting for previously started skimage.sh to terminate . . ."
         wait ${pid_skimage}
