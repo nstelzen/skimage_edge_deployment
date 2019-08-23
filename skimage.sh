@@ -13,13 +13,13 @@ function monitor_semaphore {
 
 # Start monitoring the semphore file
 semaphore_dir="/home/odroid/skimage_edge_deployment/data/semaphore"
-mkdir -p ${semaphore_dir}
+mkdir -p --mode=0777 ${semaphore_dir}
 touch "${semaphore_dir}/RESET"
 
 running_skimage_pids=($(pgrep -f skimage.sh))
 for pid in running_skimage_pids
 do
-    if [pid ne $0]
+    if [pid != $0]
     then
         echo "Waiting for previously started skimage.sh to terminate . . ."
         wait pid
