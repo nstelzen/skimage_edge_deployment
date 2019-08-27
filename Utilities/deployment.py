@@ -1,0 +1,233 @@
+# Python script to install and/or update Skimage 
+
+# Options:
+#   1) Full install from scratch
+#   2) Update docker image
+#   3) Update all source code
+#   4) Update parameter files only
+
+# The selected option will be performed on all the Odroids listed in the parameter file
+
+# All Odroids in network should have hard-coded login:password "odroid:odroid"
+import urllib2
+import git
+import sys
+import subprocess
+import python_src.parameter_parser
+from python_src.startup_checks import check_ping
+
+deployment_logger = logging.getLogger('Skimage-deployment')
+
+def test_internet_connection():
+    # Test internet connection, warn that we can't pull latest Docker
+    # image or source code from repos w/o internet
+    try:
+        deployment_logger.info('Testing internet connection . . . ')
+        response = urllib2.urlopen('https://www.google.com/', timeout=1)
+        deployment_logger.info('Internet connection found')
+        return True
+    except urllib2.URLError as err:
+        deployment_logger.warning('No internet connection found! '
+        + 'Proceeding with to do the update with local files '
+        + 'Remember to synchronize the source code with the Github repo as soon as possible') 
+        return False
+
+def pull_source_code(source_folder):
+    # Attempt to pull source code from Github, warn if not possible
+    try:
+        git_repo = git.Repo(source_folder)
+        git_repo.remotes.origin.pull()
+    except:
+        deployment_logger.warning('Unable to pull latest version of code from the Github repository')
+    return
+
+def pull_docker_image(docker_image_name):
+    # Attempt to pull Docker image, warn if not possible
+    try:
+        subprocess.run('docker pull ' + docker_image_name, check=True, shell=True)
+    except:
+        deployment_logger.warning('Unable to pull latest version of the docker image from the repository')
+
+    return 
+
+def create_docker_tarball(docker_image_name):
+    # Create compressed docker image file from local docker image
+    try:
+        subprocess.run('docker save -o ~/docker_image.tar ' + docker_image_name, check=True, shell=True)
+    except:
+        deployment_logger.critical('Unable to compress and save docker image! Check docker_image_name and try again')
+        sys.exit(0)
+
+def get_list_of_odroids():
+    # Load parameter file and get list of odroid's ip address
+    # ping each ip and report results
+    try:
+        deployment_logger.info('Loading parameter file . . . ')
+        parameters_all = parameter_parser.get_parameters(param_filename = 'data/skimage_parameters.xlsx',
+                                                     get_all_params = True)
+    except:
+        deployment_logger.critical('Unable to load parameter file!')
+        sys.exit(0)
+
+    list_of_odroids = []
+    for params in parameters_all:
+        if not params['Sensor_Label']:
+            sensor_label = params['Sensor_Label']
+            ip_address = params['Odroid_Path']
+            ping_status = check_ping(ip_address)
+            if ping_status:
+                list_of_odroids.append(ip_address)
+                deployment_logger.info('Odroid: ' +  sensor_label 
+                                     + '   IP address: ' + ip_address 
+                                     + '   Connection status: Found on network') 
+            else:
+                deployment_logger.error('Odroid: ' +  sensor_label 
+                                      + '   IP address: ' + ip_address 
+                                      + '   Connection status: NOT found on network')
+
+    return list_of_odroids
+
+def copy_parameter_file(ip_address):
+    # Copy parameter file to remote Odroid
+    pass
+
+def write_my_id(ip_address):
+    # Check if my_id.txt file exists
+    # If it doesn't exist, create it. Contains the last three numbers of ip address
+    pass
+
+def update_source_code(ip_address):
+    # Delete source code folder on remote, preserving log folders
+    # Copy local source code file to remote
+    # Change permission to +x on "skimage.sh"
+    pass
+
+def setup_systemd(ip_address):
+    # After an update of the source code this resets the systemd service
+    # Copy the skimage_watchdog.service file to correct location
+    # Reload systemd daemon
+    # Enable systemd service
+    pass
+
+def confirm_skimage_logs_folder(ip_address):
+    # Check that Logs_SKIMAGE folder exists, if not, create it
+    # Check that soft link to home/odroid/Logs_SKIMAGE, if not, create it
+    pass
+
+def compare_time(ip_address):
+    # set timezone
+    # Compare date/time local and remote, warn if difference is too great
+    pass
+
+def update_docker_image(ip_address):
+    # Copy zipped docker image to remote
+    # Load docker image on remote
+    pass
+
+def reboot_remote(ip_address):
+    # Reboot remote odroid
+    pass
+
+def fresh_install(ip_address):
+    # A fresh install means the remote odroid has simply the factory OS
+    # We require that the remote odroid have an internet connection to 
+    # do a fresh install
+
+    # Check internet connection
+    # Run pre-setup.sh to install the docker engine, pull the source code from github, etc.
+    pass
+
+
+def deploy_skimage(**args):
+    # Main update script
+    login = 'odroid'
+    password = 'odroid'
+    source_folder = '/home/odroid/skimage_edge_deployment'
+    docker_image_name = 'nickstelzenmuller/skimage:ARM_prod'
+
+    deployment_logger.info('''Options:
+    1 : Full install from scratch 
+    2 : Update docker image
+    3 : Update all source code
+    4 : Update parameter files only''')
+    if not args:
+        option = input('Please select and option (1-4) :')
+
+    # Select option
+    if option == 1:
+        # Do a fresh install. This will pull the latest docker image and source folder
+        do_fresh_install = True
+        do_update_docker_image = False
+        do_update_source_folder = False
+        do_update_parameters = False
+
+    elif option == 2:
+        # Update Docker image. Do a source folder update as well
+        do_fresh_install = False
+        do_update_docker_image = True
+        do_update_source_folder = True
+        do_update_parameters = False
+
+    elif option == 3:
+        # Update source folder. This includes the parameter file 
+        do_fresh_install = False
+        do_update_docker_image = False
+        do_update_source_folder = True
+        do_update_parameters = False
+
+    elif option == 4:
+        # Update the parameter file only
+        do_fresh_install = False
+        do_update_docker_image = False
+        do_update_source_folder = False
+        do_update_parameters = True
+
+    else:
+        deployment_logger.info('The valid options are 1, 2, 3, or 4. Please choose a valid option')
+        return None
+
+    internet_connection = test_internet_connection()
+
+    if internet_connection:
+        pull_source_code(source_folder)
+        pull_docker_image(docker_image_name)
+
+    if do_fresh_install:
+        if not internet_connection:
+            deployment_logger.info('The "fresh installation" option requires an internet connection ' +
+                  'but one was not found. Exiting now')
+            return None
+    
+    if do_update_docker_image:
+        docker_tarball = create_docker_tarball()
+
+    list_of_odroids = get_list_of_odroids()
+
+    for ip_address in list_of_odroids:
+
+        if do_fresh_install:
+            fresh_install(ip_address)
+
+        if do_update_docker_image:
+            update_docker_image(ip_address)
+
+        if do_update_source_folder:
+            update_source_code(ip_address)
+            setup_systemd(ip_address)
+            compare_time(ip_address)
+            write_my_id(ip_address)
+            confirm_skimage_logs_folder(ip_address)
+            reboot_remote(ip_address)
+
+        if do_update_parameters:
+            copy_parameter_file(ip_address)
+            compare_time(ip_address)
+            write_my_id(ip_address)
+            confirm_skimage_logs_folder(ip_address)
+            reboot_remote(ip_address)
+        
+
+
+
+
+    
