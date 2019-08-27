@@ -20,8 +20,8 @@ def check_filesystem():
 
     file_paths = {'logs_tracks': logs_tracks_fp,
                   'logs_SKIMAGE': logs_SKIMAGE_fp,
-                  'logs_program': logs_program_fp
-                  }
+                  'logs_program': logs_program_fp,
+                  'params': data}
 
     if not logs_program_fp.is_dir():
         try:
