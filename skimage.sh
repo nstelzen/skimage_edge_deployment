@@ -11,6 +11,13 @@ function monitor_semaphore {
         ${semaphore_dir}
 }
 
+
+if [ -d "/tmp/.docker.xauth/" ]
+    then
+    sudo rm -R /tmp/.docker.xauth/
+
+fi
+
 # Make a "RESET" file in the semaphore directory
 # (and make the semaphore directory if it doesn't already exist)
 # This tells other instances of Skimage to shutdown
