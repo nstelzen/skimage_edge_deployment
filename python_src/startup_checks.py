@@ -17,11 +17,12 @@ def check_filesystem():
     logs_tracks_fp = base_fp / 'Logs_tracks'
     logs_SKIMAGE_fp = base_fp / 'Logs_SKIMAGE'
     logs_program_fp = base_fp / 'Logs_program'
+    data_fp = base_fp / 'data'
 
     file_paths = {'logs_tracks': logs_tracks_fp,
                   'logs_SKIMAGE': logs_SKIMAGE_fp,
                   'logs_program': logs_program_fp,
-                  'params': data}
+                  'params': data_fp}
 
     if not logs_program_fp.is_dir():
         try:
@@ -43,7 +44,9 @@ def check_filesystem():
 
     if not all([logs_program_fp.is_dir(),
                 logs_SKIMAGE_fp.is_dir(),
-                logs_tracks_fp.is_dir()]):
+                logs_tracks_fp.is_dir(),
+                data_fp.is_dir()]):
+
         module_logger.critical(
                 'HALTING:'
                 ' Directory tree incorrectly configured, please'
