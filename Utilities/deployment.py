@@ -109,7 +109,7 @@ def copy_parameter_file(ssh_client, source_folder, password):
     # Copy parameter file to remote Odroid
     parameter_filepath = source_folder + '/data/skimage_parameters.xlsx'
     parameter_pickle_filepath = source_folder + '/data/skimage_parameters.pickle'
-    stdin, stdout, stderr = ssh.exec_command('sudo rm -f ' + parameter_filepath 
+    stdin, stdout, stderr = ssh_client.exec_command('sudo rm -f ' + parameter_filepath 
                                              + ' ' + parameter_pickle_filepath)
     stdin.write(password + '\n')
     print(stdout.readlines())
