@@ -93,7 +93,7 @@ def get_list_of_odroids():
 
     return list_of_odroids
 
-def connect_to_remote_odroid(ip_address, user, password ):
+def connect_to_remote_odroid(ip_address, user, password):
     try:
         logging.info('Establishing SSH connection to ' + user + '@' + ip_address + ' . . . ')
         ssh_client =paramiko.SSHClient()
@@ -145,10 +145,10 @@ def update_source_code(ssh_client, source_folder, password):
     # Delete source code folder on remote, preserving log folders
     # Copy local source code file to remote
     # Change permission to +x on "skimage.sh"
-    parameter_filepath = source_folder + '/data/skimage_parameters.xlsx'
-    parameter_pickle_filepath = source_folder + '/data/skimage_parameters.pickle'
+
     try:
         cmd = 'sudo find ' + source_folder + ' -not -name \'Logs_*\' -delete'
+        print(cmd)
         stdin, stdout, stderr = ssh_client.exec_command(cmd)
         stdin.write(password + '\n')
     
