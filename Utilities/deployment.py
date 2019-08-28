@@ -274,7 +274,7 @@ def deploy_skimage(**args):
             copy_successful = copy_parameter_file(ssh_client, source_folder, password)
             if copy_successful:
                 compare_time(ip_address)
-                write_my_id(ip_address)
+                write_my_id(ssh_client, source_folder, ip_address)
                 confirm_skimage_logs_folder(ip_address)
                 reboot_remote(ip_address)
             else: 
