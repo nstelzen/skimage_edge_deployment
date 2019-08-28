@@ -133,7 +133,7 @@ def write_my_id(ssh_client, source_folder, ip_address, password):
     
     my_id_filename = source_folder + '/data/my_id.txt'
     my_id = ip_address[-3::]
-    print(my_id)
+    print('sudo echo \"' + str(my_id) + '\" > ' + my_id_filename)
     try:
         stdin, stdout, stderr = ssh_client.exec_command('sudo echo \"' + str(my_id) + '\" > ' + my_id_filename)
         stdin.write(password + '\n')
