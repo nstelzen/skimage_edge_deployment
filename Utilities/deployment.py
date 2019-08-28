@@ -77,7 +77,7 @@ def get_list_of_odroids():
 
     list_of_odroids = []
     for params in parameters_all:
-        if not params['Sensor_Label']:
+        if not params['Sensor_Label'] == 'Master':
             sensor_label = params['Sensor_Label']
             ip_address = params['Odroid_Path']
             ping_status = check_ping(ip_address)
@@ -226,6 +226,7 @@ def deploy_skimage(**args):
 
     list_of_odroids = get_list_of_odroids()
 
+    
     bad_connections = []
     for ip_address in list_of_odroids:
         ssh_client = connect_to_remote_odroid(ip_address, user, password)
