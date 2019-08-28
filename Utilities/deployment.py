@@ -177,8 +177,9 @@ def update_source_code(ssh_client, source_folder, password):
                     ftp_client.mkdir(remote_folder)
                     
                     for file_path in file_or_folder.iterdir():
-                        remote_filepath = source_folder + '/' + file_or_folder.name + '/' + file_path.name
-                        ftp_client.put(file_path.resolve().as_posix(), remote_filepath)
+                        if file_path.is_file():
+                            remote_filepath = source_folder + '/' + file_or_folder.name + '/' + file_path.name
+                            ftp_client.put(file_path.resolve().as_posix(), remote_filepath)
 
         ftp_client.close()
         return True
