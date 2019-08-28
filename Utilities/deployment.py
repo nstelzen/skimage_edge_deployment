@@ -169,7 +169,7 @@ def update_source_code(ssh_client, source_folder, password):
                 print(remote_filepath)
                 ftp_client.put(file_or_folder.resolve().as_posix(), remote_filepath)
             
-            elif file_or_folder.isdir():
+            elif file_or_folder.is_dir():
                 
                 if not file_or_folder.name in names_not_to_copy: 
                     remote_folder = source_folder + '/' + file_or_folder.name
