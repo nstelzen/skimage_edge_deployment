@@ -166,6 +166,7 @@ def update_source_code(ssh_client, source_folder, password):
             
             if file_or_folder.is_file():
                 remote_filepath = source_folder + '/' + file_or_folder.name
+                print(remote_filepath)
                 ftp_client.put(file_or_folder.resolve().as_posix(), remote_filepath)
             
             elif file_or_folder.isdir():
