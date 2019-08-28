@@ -127,7 +127,7 @@ def copy_parameter_file(ssh_client, source_folder, password):
         logging.warning('Error in copying parameter file to remote odroid')
         return False
 
-def write_my_id(ssh_client, source_folder, ip_address):
+def write_my_id(ssh_client, source_folder, ip_address, password):
     # Check if my_id.txt file exists
     # If it doesn't exist, create it. Contains the last three numbers of ip address
     
@@ -274,7 +274,7 @@ def deploy_skimage(**args):
             copy_successful = copy_parameter_file(ssh_client, source_folder, password)
             if copy_successful:
                 compare_time(ip_address)
-                write_my_id(ssh_client, source_folder, ip_address)
+                write_my_id(ssh_client, source_folder, ip_address, password)
                 confirm_skimage_logs_folder(ip_address)
                 reboot_remote(ip_address)
             else: 
