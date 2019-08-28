@@ -25,11 +25,11 @@ def test_internet_connection():
     # image or source code from repos w/o internet
     try:
         deployment_logger.info('Testing internet connection . . . ')
-        response = urllib2.urlopen('https://www.google.com/', timeout=1)
+        response = urllib.urlopen('https://www.google.com/', timeout=1)
         deployment_logger.info('Internet connection found')
         return True
 
-    except urllib2.URLError as err:
+    except urllib.URLError as err:
         deployment_logger.warning('No internet connection found! '
         + 'Proceeding with to do the update with local files '
         + 'Remember to synchronize the source code with the Github repo as soon as possible') 
