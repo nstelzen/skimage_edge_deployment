@@ -36,11 +36,11 @@ def test_internet_connection():
         + 'Remember to synchronize the source code with the Github repo as soon as possible') 
         return False
 
-def pull_source_code(source_folder):
+def pull_source_code():
     # Attempt to pull source code from Github, warn if not possible
     try:
         logging.info('Pulling latest version of source code from github . . . ')
-        git_repo = git.Repo(source_folder)
+        git_repo = git.Repo('/home/')
         git_repo.remotes.origin.pull()
         logging.info('Pull successful, source code is synchronized with github')
     except:
@@ -165,7 +165,7 @@ def deploy_skimage(**args):
     # Main update script
     user = 'odroid'
     password = 'odroid'
-    source_folder = '/home'
+    source_folder = '/home/odroid/skimage_edge_deployment'
     docker_image_name = 'nickstelzenmuller/skimage:ARM_prod'
 
     logging.info('''Options:
@@ -212,7 +212,7 @@ def deploy_skimage(**args):
     internet_connection = test_internet_connection()
 
     if internet_connection:
-        pull_source_code(source_folder)
+        pull_source_code()
         pull_docker_image(docker_image_name)
 
     if do_fresh_install:
