@@ -127,20 +127,19 @@ def copy_parameter_file(ssh_client, source_folder, password):
         logging.warning('Error in copying parameter file to remote odroid')
         return False
 
-def write_my_id(ssh_client, source_folder, ip_address, password):
+def write_my_id(ssh_client, source_folder, ip_address):
     # Check if my_id.txt file exists
     # If it doesn't exist, create it. Contains the last three numbers of ip address
     
     my_id_filename = source_folder + '/data/my_id.txt'
     my_id = ip_address[-3::]
-    print('sudo echo \"' + str(my_id) + '\" > ' + my_id_filename)
     try:
         stdin, stdout, stderr = ssh_client.exec_command('echo \"' + str(my_id) + '\" > ' + my_id_filename)
-        # stdin.write(password + '\n')
     
     except:
         logging.warning('Error in writing to the my_id.txt file on the remote machine')
-    pass
+    
+    return
 
 def update_source_code(ssh_client):
     # Delete source code folder on remote, preserving log folders
@@ -155,10 +154,20 @@ def setup_systemd(ssh_client):
     # Enable systemd service
     pass
 
-def confirm_skimage_logs_folder(ssh_client):
+def confirm_skimage_logs_folder(ssh_client, source_folder, skimage_log_link_folder):
     # Check that Logs_SKIMAGE folder exists, if not, create it
     # Check that soft link to home/odroid/Logs_SKIMAGE, if not, create it
-    pass
+    logs_file_path = source_folder + '/Logs_SKIMAGE'
+
+    try:
+        stdin, stdout, stderr = ssh_client.exec_command('mkdir -p ' + logs_file_path)
+        stdin, stdout, stderr = ssh_client.exec_command('ln -sf ' + logs_file_path 
+                                                        + ' ' + skimage_log_link_folder)
+    
+    except:
+        logging.warning('Error in skimage logs folder checks')
+    
+    return
 
 def compare_time(ssh_client):
     # set timezone
@@ -188,6 +197,7 @@ def deploy_skimage(**args):
     user = 'odroid'
     password = 'odroid'
     source_folder = '/home/odroid/skimage_edge_deployment'
+    skimage_log_link_folder = '/home/odroid/Logs_SKIMAGE'
     docker_image_name = 'nickstelzenmuller/skimage:ARM_prod'
 
     logging.info('''Options:
@@ -275,8 +285,8 @@ def deploy_skimage(**args):
             copy_successful = copy_parameter_file(ssh_client, source_folder, password)
             if copy_successful:
                 compare_time(ip_address)
-                write_my_id(ssh_client, source_folder, ip_address, password)
-                confirm_skimage_logs_folder(ip_address)
+                write_my_id(ssh_client, source_folder, ip_address)
+                confirm_skimage_logs_folder(ssh_client, source_folder, skimage_log_link_folder)
                 reboot_remote(ip_address)
             else: 
                 continue
