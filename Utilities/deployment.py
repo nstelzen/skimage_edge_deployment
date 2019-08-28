@@ -165,7 +165,7 @@ def deploy_skimage(**args):
     # Main update script
     user = 'odroid'
     password = 'odroid'
-    source_folder = '/home/skimage_edge_deployment'
+    source_folder = '/home'
     docker_image_name = 'nickstelzenmuller/skimage:ARM_prod'
 
     logging.info('''Options:
