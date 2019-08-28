@@ -141,10 +141,29 @@ def write_my_id(ssh_client, source_folder, ip_address):
     
     return
 
-def update_source_code(ssh_client):
+def update_source_code(ssh_client, source_folder, password):
     # Delete source code folder on remote, preserving log folders
     # Copy local source code file to remote
     # Change permission to +x on "skimage.sh"
+    parameter_filepath = source_folder + '/data/skimage_parameters.xlsx'
+    parameter_pickle_filepath = source_folder + '/data/skimage_parameters.pickle'
+    try:
+        cmd = 'sudo find ' + source_folder + ' -not -name \'Logs_*\' -delete'
+        stdin, stdout, stderr = ssh_client.exec_command(cmd)
+        stdin.write(password + '\n')
+    
+    except:
+        logging.warning('Error in deleting the source folder on the remote machine')
+    
+    # try:
+    #     ftp_client=ssh_client.open_sftp()
+    #     ftp_client.put('/home/data/skimage_parameters.xlsx', parameter_filepath)
+    #     ftp_client.close()
+    #     return True
+    
+    # except:
+    #     logging.warning('Error in copying parameter file to remote odroid')
+    #     return False
     pass
 
 def setup_systemd(ssh_client):
@@ -206,7 +225,7 @@ def deploy_skimage(**args):
     3 : Update all source code
     4 : Update parameter files only''')
     if not args:
-        option = input('Please select and option (1-4) :')
+        option = input('Please select and option (1-4) : ')
 
     # Select option
     if option == '1':
@@ -274,12 +293,15 @@ def deploy_skimage(**args):
             update_docker_image(ip_address)
 
         if do_update_source_folder:
-            update_source_code(ssh_client, source_folder, password)
-            setup_systemd(ssh_client, source_folder, password)
-            compare_time(ip_address)
-            write_my_id(ip_address)
-            confirm_skimage_logs_folder(ip_address)
-            reboot_remote(ip_address)
+            copy_successful = update_source_code(ssh_client, source_folder, password)
+            if copy_successful:
+                setup_systemd(ssh_client, source_folder, password)
+                compare_time(ip_address)
+                write_my_id(ip_address)
+                confirm_skimage_logs_folder(ip_address)
+                reboot_remote(ip_address)
+            else:
+                continue
 
         if do_update_parameters:
             copy_successful = copy_parameter_file(ssh_client, source_folder, password)
