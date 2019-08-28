@@ -30,7 +30,7 @@ def test_internet_connection():
         logging.info('Internet connection found')
         return True
 
-    except urllib.URLError as err:
+    except:
         logging.warning('No internet connection found! '
         + 'Proceeding with to do the update with local files '
         + 'Remember to synchronize the source code with the Github repo as soon as possible') 
