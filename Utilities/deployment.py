@@ -236,7 +236,8 @@ def deploy_skimage(**args):
         if not ssh_client:
             logging.warning('Unable to update Odroid at ' + ip_address)
             bad_connections.append(ip_address)
-
+            continue
+            
         if do_fresh_install:
             fresh_install(ip_address)
 
