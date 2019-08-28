@@ -148,10 +148,10 @@ def update_source_code(ssh_client, source_folder, password):
     # Change permission to +x on "skimage.sh"
 
     try:
-        cmd = 'sudo find ' + source_folder + ' -mindepth 1 -not -name \'Logs_*\' -delete'
+        cmd = 'find ' + source_folder + ' -mindepth 1 -not -name \'Logs_*\' -delete'
         print(cmd)
         stdin, stdout, stderr = ssh_client.exec_command(cmd)
-        stdin.write(password + '\n')
+        # stdin.write(password + '\n')
     
     except:
         logging.warning('Error in deleting the source folder on the remote machine')
@@ -163,6 +163,7 @@ def update_source_code(ssh_client, source_folder, password):
         # Get list of files and folder to copy to remote
         root_path = Path('/home')
         for file_or_folder in root_path.glob('*'):
+
             if file_or_folder.name.startswith('.') or file_or_folder.name[0:3] == 'Log':
                 continue
             if file_or_folder.is_file():
