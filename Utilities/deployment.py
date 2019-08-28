@@ -39,10 +39,12 @@ def test_internet_connection():
 def pull_source_code(source_folder):
     # Attempt to pull source code from Github, warn if not possible
     try:
+        logging.info('Pulling latest version of source code from github . . . ')
         git_repo = git.Repo(source_folder)
         git_repo.remotes.origin.pull()
+        logging.info('Pull successful, source code is synchronized with github')
     except:
-        logging.warning('Unable to pull latest version of code from the Github repository')
+        logging.warning('Unable to pull latest version of code from the github repository')
     return
 
 def pull_docker_image(docker_image_name):
@@ -163,7 +165,7 @@ def deploy_skimage(**args):
     # Main update script
     user = 'odroid'
     password = 'odroid'
-    source_folder = '/home/odroid/skimage_edge_deployment'
+    source_folder = '/home/skimage_edge_deployment'
     docker_image_name = 'nickstelzenmuller/skimage:ARM_prod'
 
     logging.info('''Options:
