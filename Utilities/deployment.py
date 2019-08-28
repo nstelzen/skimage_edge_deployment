@@ -249,7 +249,7 @@ def deploy_skimage(**args):
             reboot_remote(ip_address)
 
         if do_update_parameters:
-            copy_parameter_file(ip_address)
+            copy_parameter_file(ip_address, source_folder, password)
             compare_time(ip_address)
             write_my_id(ip_address)
             confirm_skimage_logs_folder(ip_address)
