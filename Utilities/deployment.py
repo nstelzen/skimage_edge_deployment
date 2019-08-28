@@ -175,28 +175,28 @@ def deploy_skimage(**args):
         option = input('Please select and option (1-4) :')
 
     # Select option
-    if option == 1:
+    if option == '1':
         # Do a fresh install. This will pull the latest docker image and source folder
         do_fresh_install = True
         do_update_docker_image = False
         do_update_source_folder = False
         do_update_parameters = False
 
-    elif option == 2:
+    elif option == '2':
         # Update Docker image. Do a source folder update as well
         do_fresh_install = False
         do_update_docker_image = True
         do_update_source_folder = True
         do_update_parameters = False
 
-    elif option == 3:
+    elif option == '3':
         # Update source folder. This includes the parameter file 
         do_fresh_install = False
         do_update_docker_image = False
         do_update_source_folder = True
         do_update_parameters = False
 
-    elif option == 4:
+    elif option == '4':
         # Update the parameter file only
         do_fresh_install = False
         do_update_docker_image = False
@@ -205,7 +205,7 @@ def deploy_skimage(**args):
 
     else:
         logging.info('The valid options are 1, 2, 3, or 4. Please choose a valid option')
-        return None
+        deploy_skimage()
 
     internet_connection = test_internet_connection()
 
