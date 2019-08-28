@@ -254,6 +254,7 @@ def deploy_skimage(**args):
         
 
 
-
+if __name__ == "__main__":
+    deploy_skimage()
 
     
