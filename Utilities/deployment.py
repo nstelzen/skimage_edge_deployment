@@ -20,7 +20,7 @@ import python_src.parameter_parser
 from python_src.startup_checks import check_ping
 
 deployment_logger = logging.getLogger('Skimage-deployment')
-deployment_logger.setLevel(INFO)
+deployment_logger.setLevel(logging.INFO)
 
 def test_internet_connection():
     # Test internet connection, warn that we can't pull latest Docker
