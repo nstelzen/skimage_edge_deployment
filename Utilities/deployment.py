@@ -15,6 +15,7 @@ import sys
 import subprocess
 import paramiko
 import logging 
+from pathlib import Path
 
 import python_src.parameter_parser as parameter_parser
 from python_src.startup_checks import check_ping
@@ -155,16 +156,35 @@ def update_source_code(ssh_client, source_folder, password):
     except:
         logging.warning('Error in deleting the source folder on the remote machine')
     
-    # try:
-    #     ftp_client=ssh_client.open_sftp()
-    #     ftp_client.put('/home/data/skimage_parameters.xlsx', parameter_filepath)
-    #     ftp_client.close()
-    #     return True
+
+    try:
+        ftp_client=ssh_client.open_sftp()
+        names_not_to_copy = ['.*', 'Logs_*']
+        # Get list of files and folder to copy to remote
+        root_path = Path('/home')
+        for file_or_folder in root_path.glob('*'):
+            
+            if file_or_folder.is_file():
+                remote_filepath = source_folder + '/' + file_or_folder.name
+                ftp_client.put(file_or_folder.resolve().as_posix(), remote_filepath)
+            
+            elif file_or_folder.isdir():
+                
+                if not file_or_folder.name in names_not_to_copy: 
+                    remote_folder = source_folder + '/' + file_or_folder.name
+                    ftp_client.mkdir(remote_folder)
+                    
+                    for file_path in file_or_folder.iterdir():
+                        remote_filepath = source_folder + '/' + file_or_folder.name + '/' + file_path.name
+                        ftp_client.put(file_path.resolve().as_posix(), remote_filepath)
+
+        ftp_client.close()
+        return True
+    except:
+        
+        logging.warning('Error in copying source folder to remote odroid')
+        return False
     
-    # except:
-    #     logging.warning('Error in copying parameter file to remote odroid')
-    #     return False
-    pass
 
 def setup_systemd(ssh_client):
     # After an update of the source code this resets the systemd service
