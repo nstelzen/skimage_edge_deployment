@@ -102,14 +102,15 @@ def connect_to_remote_odroid(ip_address, user, password ):
         deployment_logger.warning('Unable to connect to ' + ip_address + ' via SSH')
         return None
 
-def copy_parameter_file(ssh_client, source_folder):
+def copy_parameter_file(ssh_client, source_folder, password):
     # Copy parameter file to remote Odroid
     parameter_filepath = source_folder + '/data/skimage_parameters.xlsx'
     parameter_pickle_filepath = source_folder + '/data/skimage_parameters.pickle'
-    stdin, stdout, stderr = ssh.exec_command(“sudo ls”)
-stdin.write(‘mypassword\n’)
-print stdout.readlines()
-    pass
+    stdin, stdout, stderr = ssh.exec_command('sudo rm -f ' + parameter_filepath 
+                                             + ' ' + parameter_pickle_filepath)
+    stdin.write(password + '\n')
+    print(stdout.readlines())
+    return
 
 def write_my_id(ssh_client):
     # Check if my_id.txt file exists
