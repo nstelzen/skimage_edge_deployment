@@ -109,18 +109,36 @@ def copy_parameter_file(ssh_client, source_folder, password):
     # Copy parameter file to remote Odroid
     parameter_filepath = source_folder + '/data/skimage_parameters.xlsx'
     parameter_pickle_filepath = source_folder + '/data/skimage_parameters.pickle'
-    stdin, stdout, stderr = ssh_client.exec_command('sudo rm -f ' + parameter_filepath 
-                                             + ' ' + parameter_pickle_filepath)
-    stdin.write(password + '\n')
-    print(stdout.readlines())
-    ftp_client=ssh_client.open_sftp()
-    ftp_client.put('/home/data/skimage_parameters.xlsx', parameter_filepath)
-    ftp_client.close()
-    return
+    try:
+        stdin, stdout, stderr = ssh_client.exec_command('sudo rm -f ' + parameter_filepath 
+                                                + ' ' + parameter_pickle_filepath)
+        stdin.write(password + '\n')
+    
+    except:
+        logging.warning('Error in deleting old verions of the parameter file on the remote machine')
+    
+    try:
+        ftp_client=ssh_client.open_sftp()
+        ftp_client.put('/home/data/skimage_parameters.xlsx', parameter_filepath)
+        ftp_client.close()
+        return True
+    
+    except:
+        logging.warning('Error in copying parameter file to remote odroid')
+        return False
 
-def write_my_id(ssh_client):
+def write_my_id(ssh_client, source_folder, ip_address):
     # Check if my_id.txt file exists
     # If it doesn't exist, create it. Contains the last three numbers of ip address
+    
+    my_id_filename = source_folder + '/data/my_id.txt'
+    my_id = ip_address[-3::]
+    try:
+        stdin, stdout, stderr = ssh_client.exec_command('sudo echo "' + my_id + '" > ' + my_id_filename)
+        stdin.write(password + '\n')
+    
+    except:
+        logging.warning('Error in writing to the my_id.txt file on the remote machine')
     pass
 
 def update_source_code(ssh_client):
@@ -237,7 +255,7 @@ def deploy_skimage(**args):
             logging.warning('Unable to update Odroid at ' + ip_address)
             bad_connections.append(ip_address)
             continue
-            
+
         if do_fresh_install:
             fresh_install(ip_address)
 
@@ -253,13 +271,22 @@ def deploy_skimage(**args):
             reboot_remote(ip_address)
 
         if do_update_parameters:
-            copy_parameter_file(ssh_client, source_folder, password)
-            compare_time(ip_address)
-            write_my_id(ip_address)
-            confirm_skimage_logs_folder(ip_address)
-            reboot_remote(ip_address)
-        
+            copy_successful = copy_parameter_file(ssh_client, source_folder, password)
+            if copy_successful:
+                compare_time(ip_address)
+                write_my_id(ip_address)
+                confirm_skimage_logs_folder(ip_address)
+                reboot_remote(ip_address)
+            else: 
+                continue
+
         ssh_client.close() 
+
+    if bad_connections:
+        logging.warning('The Odroid(s) at the following addresses were not able to be updated')
+        
+        for bad_address in bad_connections:
+            logging.warning(bad_address)
 
 if __name__ == "__main__":
     deploy_skimage()
