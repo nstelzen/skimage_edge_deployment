@@ -135,7 +135,7 @@ def write_my_id(ssh_client, source_folder, ip_address, password):
     my_id = ip_address[-3::]
     print(my_id)
     try:
-        stdin, stdout, stderr = ssh_client.exec_command('sudo echo \"' + my_id + '\" > ' + my_id_filename)
+        stdin, stdout, stderr = ssh_client.exec_command('sudo echo \"' + str(my_id) + '\" > ' + my_id_filename)
         stdin.write(password + '\n')
     
     except:
