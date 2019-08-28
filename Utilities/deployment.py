@@ -147,7 +147,7 @@ def update_source_code(ssh_client, source_folder, password):
     # Change permission to +x on "skimage.sh"
 
     try:
-        cmd = 'sudo find ' + source_folder + ' -not -name \'Logs_*\' -delete'
+        cmd = 'sudo find ' + source_folder + ' -mindepth 1 -not -name \'Logs_*\' -delete'
         print(cmd)
         stdin, stdout, stderr = ssh_client.exec_command(cmd)
         stdin.write(password + '\n')
