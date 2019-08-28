@@ -135,8 +135,8 @@ def write_my_id(ssh_client, source_folder, ip_address, password):
     my_id = ip_address[-3::]
     print('sudo echo \"' + str(my_id) + '\" > ' + my_id_filename)
     try:
-        stdin, stdout, stderr = ssh_client.exec_command('sudo echo \"' + str(my_id) + '\" > ' + my_id_filename)
-        stdin.write(password + '\n')
+        stdin, stdout, stderr = ssh_client.exec_command('echo \"' + str(my_id) + '\" > ' + my_id_filename)
+        # stdin.write(password + '\n')
     
     except:
         logging.warning('Error in writing to the my_id.txt file on the remote machine')
