@@ -159,7 +159,7 @@ def update_source_code(ssh_client, source_folder, password):
 
     try:
         ftp_client=ssh_client.open_sftp()
-        names_not_to_copy = ['.*', 'Logs_*']
+        names_not_to_copy = ('.*', 'Logs_*')
         # Get list of files and folder to copy to remote
         root_path = Path('/home')
         for file_or_folder in root_path.glob('*'):
