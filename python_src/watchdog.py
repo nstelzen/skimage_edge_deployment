@@ -153,7 +153,7 @@ while True:
         watchdog_logger.error('Resetting docker')
 
         # Check semaphore directory
-        parameters_filepath = file_paths['param']
+        parameters_filepath = file_paths['params']
         semaphore_dir = parameters_filepath.parent / 'semaphore'  # this should be data/semaphore
         if not semaphore_dir.is_dir():
             os.mkdir(semaphore_dir)

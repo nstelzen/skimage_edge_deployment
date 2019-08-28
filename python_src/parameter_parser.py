@@ -393,11 +393,11 @@ def get_parameters_all(param_filename):
 
 def get_parameters(param_filename = 'data/skimage_parameters.xlsx',
                   param_pickled_filename = 'data/skimage_parameters.pickle',
-                  roi_selector = False):
+                  get_all_params = False):
     
-    # If roi_selector flag is set to true we read the exel file and return 
+    # If get_all_params flag is set to true we read the exel file and return 
     # all of the parameters
-    if roi_selector:
+    if get_all_params:
         parameters_all = get_parameters_all(param_filename)
         return parameters_all
     
