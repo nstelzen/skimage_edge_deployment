@@ -113,6 +113,9 @@ def copy_parameter_file(ssh_client, source_folder, password):
                                              + ' ' + parameter_pickle_filepath)
     stdin.write(password + '\n')
     print(stdout.readlines())
+    ftp_client=ssh.open_sftp()
+    ftp_client.put('/home/data/skimage_parameters.xlsx', parameter_filepath)
+    ftp_client.close()
     return
 
 def write_my_id(ssh_client):
@@ -241,8 +244,8 @@ def deploy_skimage(**args):
             update_docker_image(ip_address)
 
         if do_update_source_folder:
-            update_source_code(ip_address)
-            setup_systemd(ip_address)
+            update_source_code(ssh_client, source_folder, password)
+            setup_systemd(ssh_client, source_folder, password)
             compare_time(ip_address)
             write_my_id(ip_address)
             confirm_skimage_logs_folder(ip_address)
@@ -255,7 +258,7 @@ def deploy_skimage(**args):
             confirm_skimage_logs_folder(ip_address)
             reboot_remote(ip_address)
         
-
+        ssh_client.close() 
 
 if __name__ == "__main__":
     deploy_skimage()
