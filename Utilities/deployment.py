@@ -9,7 +9,7 @@
 # The selected option will be performed on all the Odroids listed in the parameter file
 
 # All Odroids in network should have hard-coded login:password "odroid:odroid"
-import urllib
+import urllib.request
 import git
 import sys
 import subprocess
@@ -26,7 +26,7 @@ def test_internet_connection():
     # image or source code from repos w/o internet
     try:
         logging.info('Testing internet connection . . . ')
-        response = urllib.urlopen('https://www.google.com/', timeout=1)
+        response = urllib.request.urlopen('https://www.google.com/', timeout=1)
         logging.info('Internet connection found')
         return True
 
