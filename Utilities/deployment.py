@@ -98,7 +98,7 @@ def connect_to_remote_odroid(ip_address, user, password ):
         logging.info('Establishing SSH connection to ' + user + '@' + ip_address + ' . . . ')
         ssh_client =paramiko.SSHClient()
         ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh_client.connect(hostname=ip_address,username=user,password=password)
+        ssh_client.connect(hostname=ip_address,username=user,password=password, timeout=10)
         logging.info('SSH connection established')
         return ssh_client
     except:
@@ -234,7 +234,7 @@ def deploy_skimage(**args):
     for ip_address in list_of_odroids:
         ssh_client = connect_to_remote_odroid(ip_address, user, password)
         if not ssh_client:
-            logging.Warning('Unable to update Odroid at ' + ip_address)
+            logging.warning('Unable to update Odroid at ' + ip_address)
             bad_connections.append(ip_address)
 
         if do_fresh_install:
