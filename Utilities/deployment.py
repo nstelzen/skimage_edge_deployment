@@ -19,20 +19,19 @@ import logging
 import python_src.parameter_parser
 from python_src.startup_checks import check_ping
 
-deployment_logger = logging.getLogger('Skimage-deployment')
-deployment_logger.setLevel(logging.INFO)
+logging.basicConfig(level=logging.INFO)
 
 def test_internet_connection():
     # Test internet connection, warn that we can't pull latest Docker
     # image or source code from repos w/o internet
     try:
-        deployment_logger.info('Testing internet connection . . . ')
+        logging.info('Testing internet connection . . . ')
         response = urllib.urlopen('https://www.google.com/', timeout=1)
-        deployment_logger.info('Internet connection found')
+        logging.info('Internet connection found')
         return True
 
     except urllib.URLError as err:
-        deployment_logger.warning('No internet connection found! '
+        logging.warning('No internet connection found! '
         + 'Proceeding with to do the update with local files '
         + 'Remember to synchronize the source code with the Github repo as soon as possible') 
         return False
@@ -43,7 +42,7 @@ def pull_source_code(source_folder):
         git_repo = git.Repo(source_folder)
         git_repo.remotes.origin.pull()
     except:
-        deployment_logger.warning('Unable to pull latest version of code from the Github repository')
+        logging.warning('Unable to pull latest version of code from the Github repository')
     return
 
 def pull_docker_image(docker_image_name):
@@ -51,7 +50,7 @@ def pull_docker_image(docker_image_name):
     try:
         subprocess.run('docker pull ' + docker_image_name, check=True, shell=True)
     except:
-        deployment_logger.warning('Unable to pull latest version of the docker image from the repository')
+        logging.warning('Unable to pull latest version of the docker image from the repository')
 
     return 
 
@@ -60,18 +59,18 @@ def create_docker_tarball(docker_image_name):
     try:
         subprocess.run('docker save -o ~/docker_image.tar ' + docker_image_name, check=True, shell=True)
     except:
-        deployment_logger.critical('Unable to compress and save docker image! Check docker_image_name and try again')
+        logging.critical('Unable to compress and save docker image! Check docker_image_name and try again')
         sys.exit(0)
 
 def get_list_of_odroids():
     # Load parameter file and get list of odroid's ip address
     # ping each ip and report results
     try:
-        deployment_logger.info('Loading parameter file . . . ')
+        logging.info('Loading parameter file . . . ')
         parameters_all = parameter_parser.get_parameters(param_filename = 'data/skimage_parameters.xlsx',
                                                      get_all_params = True)
     except:
-        deployment_logger.critical('Unable to load parameter file!')
+        logging.critical('Unable to load parameter file!')
         sys.exit(0)
 
     list_of_odroids = []
@@ -82,11 +81,11 @@ def get_list_of_odroids():
             ping_status = check_ping(ip_address)
             if ping_status:
                 list_of_odroids.append(ip_address)
-                deployment_logger.info('Odroid: ' +  sensor_label 
+                logging.info('Odroid: ' +  sensor_label 
                                      + '   IP address: ' + ip_address 
                                      + '   Connection status: Found on network') 
             else:
-                deployment_logger.error('Odroid: ' +  sensor_label 
+                logging.error('Odroid: ' +  sensor_label 
                                       + '   IP address: ' + ip_address 
                                       + '   Connection status: NOT found on network')
 
@@ -94,14 +93,14 @@ def get_list_of_odroids():
 
 def connect_to_remote_odroid(ip_address, user, password ):
     try:
-        deployment_logger.info('Establishing SSH connection to ' + user + '@' + ip_address + ' . . . ')
+        logging.info('Establishing SSH connection to ' + user + '@' + ip_address + ' . . . ')
         ssh_client =paramiko.SSHClient()
         ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh_client.connect(hostname=ip_address,username=user,password=password)
-        deployment_logger.info('SSH connection established')
+        logging.info('SSH connection established')
         return ssh_client
     except:
-        deployment_logger.warning('Unable to connect to ' + ip_address + ' via SSH')
+        logging.warning('Unable to connect to ' + ip_address + ' via SSH')
         return None
 
 def copy_parameter_file(ssh_client, source_folder, password):
@@ -167,7 +166,7 @@ def deploy_skimage(**args):
     source_folder = '/home/odroid/skimage_edge_deployment'
     docker_image_name = 'nickstelzenmuller/skimage:ARM_prod'
 
-    deployment_logger.info('''Options:
+    logging.info('''Options:
     1 : Full install from scratch 
     2 : Update docker image
     3 : Update all source code
@@ -205,7 +204,7 @@ def deploy_skimage(**args):
         do_update_parameters = True
 
     else:
-        deployment_logger.info('The valid options are 1, 2, 3, or 4. Please choose a valid option')
+        logging.info('The valid options are 1, 2, 3, or 4. Please choose a valid option')
         return None
 
     internet_connection = test_internet_connection()
@@ -216,7 +215,7 @@ def deploy_skimage(**args):
 
     if do_fresh_install:
         if not internet_connection:
-            deployment_logger.info('The "fresh installation" option requires an internet connection ' +
+            logging.info('The "fresh installation" option requires an internet connection ' +
                   'but one was not found. Exiting now')
             return None
     
@@ -229,7 +228,7 @@ def deploy_skimage(**args):
     for ip_address in list_of_odroids:
         ssh_client = connect_to_remote_odroid(ip_address, user, password)
         if not ssh_client:
-            deployment_logger.Warning('Unable to update Odroid at ' + ip_address)
+            logging.Warning('Unable to update Odroid at ' + ip_address)
             bad_connections.append(ip_address)
 
         if do_fresh_install:
