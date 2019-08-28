@@ -14,6 +14,7 @@ import git
 import sys
 import subprocess
 import paramiko
+import logging 
 
 import python_src.parameter_parser
 from python_src.startup_checks import check_ping
