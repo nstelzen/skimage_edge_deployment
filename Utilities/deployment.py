@@ -159,27 +159,27 @@ def update_source_code(ssh_client, source_folder, password):
 
     try:
         ftp_client=ssh_client.open_sftp()
-        names_not_to_copy = ('.*', 'Logs_*')
+        # names_not_to_copy = ['.*', 'Logs_*']
         # Get list of files and folder to copy to remote
         root_path = Path('/home')
         for file_or_folder in root_path.glob('*'):
-            
+            if file_or_folder.name.startswith('.') or file_or_folder.name[0:3] == 'Log':
+                continue
             if file_or_folder.is_file():
                 remote_filepath = source_folder + '/' + file_or_folder.name
                 print(remote_filepath)
                 ftp_client.put(file_or_folder.resolve().as_posix(), remote_filepath)
             
             elif file_or_folder.is_dir():
+
+                remote_folder = source_folder + '/' + file_or_folder.name
+                print(remote_folder)
+                ftp_client.mkdir(remote_folder)
                 
-                if file_or_folder.name not in names_not_to_copy: 
-                    remote_folder = source_folder + '/' + file_or_folder.name
-                    print(remote_folder)
-                    ftp_client.mkdir(remote_folder)
-                    
-                    for file_path in file_or_folder.iterdir():
-                        if file_path.is_file():
-                            remote_filepath = source_folder + '/' + file_or_folder.name + '/' + file_path.name
-                            ftp_client.put(file_path.resolve().as_posix(), remote_filepath)
+                for file_path in file_or_folder.iterdir():
+                    if file_path.is_file():
+                        remote_filepath = source_folder + '/' + file_or_folder.name + '/' + file_path.name
+                        ftp_client.put(file_path.resolve().as_posix(), remote_filepath)
 
         ftp_client.close()
         return True
