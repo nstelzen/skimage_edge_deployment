@@ -16,7 +16,7 @@ import subprocess
 import paramiko
 import logging 
 
-import python_src.parameter_parser
+import python_src.parameter_parser as parameter_parser
 from python_src.startup_checks import check_ping
 
 logging.basicConfig(level=logging.INFO)
@@ -70,7 +70,7 @@ def get_list_of_odroids():
     try:
         logging.info('Loading parameter file . . . ')
         parameters_all = parameter_parser.get_parameters(param_filename = 'data/skimage_parameters.xlsx',
-                                                     get_all_params = True)
+                                                         get_all_params = True)
     except:
         logging.critical('Unable to load parameter file!')
         sys.exit(0)
