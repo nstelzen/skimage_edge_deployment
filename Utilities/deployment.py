@@ -113,7 +113,7 @@ def copy_parameter_file(ssh_client, source_folder, password):
                                              + ' ' + parameter_pickle_filepath)
     stdin.write(password + '\n')
     print(stdout.readlines())
-    ftp_client=ssh.open_sftp()
+    ftp_client=ssh_client.open_sftp()
     ftp_client.put('/home/data/skimage_parameters.xlsx', parameter_filepath)
     ftp_client.close()
     return
