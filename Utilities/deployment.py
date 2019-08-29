@@ -143,12 +143,30 @@ def write_my_id(ssh_client, source_folder, ip_address):
     return
 
 def update_source_code(ssh_client, source_folder, password):
- 
+    
+    def resolve_remote_path(source_folder, path_object):
+        # Get full local path to object minus the root '/home'
+        relative_local_path = path_object.relative_to('/home')
+        
+        # Create Path object from source_folder string
+        remote_root = Path(source_folder)
+
+        # Join the remote root and the relative local path
+        remote_path = remote_root.joinpath(relative_local_path)
+
+        # Return the full remote path as a string
+        return remote_path.as_posix()
+
     def check_for_names_to_skip(path_object):
-        skip = False
-        forbidden_beginnings = ['.', 'Logs']
+        skip = False # By default do not skip
+
+        # Hard code the beginnings of names of files/folder to skip
+        forbidden_beginnings = ['.', 'Logs'] 
         for forbidden_beginning in forbidden_beginnings:
             len_forbidden = len(forbidden_beginning)
+
+            # Check that the beginning of the name of the file/folder doesn't start with a
+            # forbidden beginning  (case insensitive)
             if path_object.name[0:len_forbidden].lower() == forbidden_beginning.lower():
                 skip = True
         return skip
@@ -157,7 +175,7 @@ def update_source_code(ssh_client, source_folder, password):
         if check_for_names_to_skip(source_file):
             logging.info('Skipping ' + source_file.name )
             return
-        remote_filepath = source_folder + '/' + source_file.name
+        remote_filepath = resolve_remote_path(source_folder, source_file)
         logging.info('Copying ' + remote_filepath + ' to remote odroid')
         ftp_client.put(source_file.resolve().as_posix(), remote_filepath)
         return
@@ -166,7 +184,7 @@ def update_source_code(ssh_client, source_folder, password):
         if check_for_names_to_skip(source_subfolder):
             logging.info('Skipping ' + source_subfolder.name )
             return
-        remote_folder = source_folder + '/' + source_subfolder.name
+        remote_folder = resolve_remote_path(source_folder, source_subfolder)
         logging.info(' Creating folder ' + remote_folder + ' on remote odroid')
         ftp_client.mkdir(remote_folder)
         
