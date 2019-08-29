@@ -136,7 +136,8 @@ def write_my_id(ssh_client, source_folder, ip_address):
     my_id = ip_address[-3::]
     try:
         stdin, stdout, stderr = ssh_client.exec_command('echo \"' + str(my_id) + '\" > ' + my_id_filename)
-    
+
+        logging.info('my_id.txt written successfully')
     except:
         logging.warning('Error in writing to the my_id.txt file on the remote machine')
     
@@ -253,7 +254,8 @@ def setup_systemd(ssh_client, source_folder, password):
         # Enable systemd service
         stdin, stdout, stderr = ssh_client.exec_command('sudo systemctl enable skimage_watchdog.service')
         stdin.write(password + '\n')
-    
+
+        logging.info('skimage_watchdog systemd service configured successfully')
     except:
         logging.warning('Error in configuring skimage_watchdog systemd service!')
     
@@ -269,15 +271,30 @@ def confirm_skimage_logs_folder(ssh_client, source_folder, skimage_log_link_fold
         stdin, stdout, stderr = ssh_client.exec_command('ln -sf ' + logs_file_path 
                                                         + ' ' + skimage_log_link_folder)
     
+        logging.info('Skimage logs folder checks passed')
     except:
         logging.warning('Error in skimage logs folder checks')
     
     return
 
-def compare_time(ssh_client):
+def compare_time(ssh_client, password):
     # set timezone
+    timezone = 'Europe/Paris'
+    try:
+        stdin, stdout, stderr = ssh_client.exec_command('sudo timedatectl set-timezone ' + timezone)
+        stdin.write(password + '\n')
+        logging.info('Successfully set time zone to ' + timezone + ' on remote odroid')
+    except:
+        logging.warning('Error in setting time zone on remote odroid!')
+    
     # Compare date/time local and remote, warn if difference is too great
-    pass
+    try:
+        stdin, stdout, stderr = ssh_client.exec_command('date')
+        print(type(stdout))
+        print(stdout)
+    except:
+        logging.warning('Error in comparing date and time between local and remote odroids')
+    return
 
 def update_docker_image(ssh_client):
     # Copy zipped docker image to remote
@@ -382,7 +399,7 @@ def deploy_skimage(**args):
             copy_successful = update_source_code(ssh_client, source_folder, password)
             if copy_successful:
                 setup_systemd(ssh_client, source_folder, password)
-                compare_time(ip_address)
+                compare_time(ssh_client, password)
                 write_my_id(ssh_client, source_folder, ip_address)
                 confirm_skimage_logs_folder(ssh_client, source_folder, skimage_log_link_folder)
                 reboot_remote(ip_address)
@@ -392,7 +409,7 @@ def deploy_skimage(**args):
         if do_update_parameters:
             copy_successful = copy_parameter_file(ssh_client, source_folder, password)
             if copy_successful:
-                compare_time(ip_address)
+                compare_time(ssh_client, password)
                 write_my_id(ssh_client, source_folder, ip_address)
                 confirm_skimage_logs_folder(ssh_client, source_folder, skimage_log_link_folder)
                 reboot_remote(ip_address)
