@@ -240,10 +240,12 @@ def setup_systemd(ssh_client, source_folder, password):
         relative_service_filepath = 'Utilities/skimage_watchdog.service'
         source_filepath = Path(source_folder).joinpath(relative_service_filepath)
         remote_destination = '/lib/systemd/system'
+        
         cmd = 'sudo cp ' + source_filepath.as_posix() + ' ' + remote_destination
-        print(cmd)
+
         stdin, stdout, stderr = ssh_client.exec_command(cmd)
         stdin.write(password + '\n')
+
         # Reload systemd daemon
         stdin, stdout, stderr = ssh_client.exec_command('sudo systemctl daemon-reload')
         stdin.write(password + '\n')
@@ -381,8 +383,8 @@ def deploy_skimage(**args):
             if copy_successful:
                 setup_systemd(ssh_client, source_folder, password)
                 compare_time(ip_address)
-                write_my_id(ip_address)
-                confirm_skimage_logs_folder(ip_address)
+                write_my_id(ssh_client, source_folder, ip_address)
+                confirm_skimage_logs_folder(ssh_client, source_folder, skimage_log_link_folder)
                 reboot_remote(ip_address)
             else:
                 continue
