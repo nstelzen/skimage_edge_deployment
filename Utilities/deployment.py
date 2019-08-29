@@ -129,8 +129,8 @@ def copy_parameter_file(ssh_client, source_folder, password):
         return False
 
 def write_my_id(ssh_client, source_folder, ip_address):
-    # Check if my_id.txt file exists
-    # If it doesn't exist, create it. Contains the last three numbers of ip address
+    # Create or overwrite (linux command ">") my_id.txt file.
+    # Contains the last three numbers of the ip address
     
     my_id_filename = source_folder + '/data/my_id.txt'
     my_id = ip_address[-3::]
@@ -143,46 +143,68 @@ def write_my_id(ssh_client, source_folder, ip_address):
     return
 
 def update_source_code(ssh_client, source_folder, password):
-    # Delete source code folder on remote, preserving log folders
-    # Copy local source code file to remote
-    # Change permission to +x on "skimage.sh"
+ 
+    def check_for_names_to_skip(path_object):
+        skip = False
+        forbidden_beginnings = ['.', 'Logs']
+        for forbidden_beginning in forbidden_beginnings:
+            len_forbidden = len(forbidden_beginning)
+            if path_object.name[0:len_forbidden].lower() == forbidden_beginning.lower():
+                skip = True
+        return skip
 
+    def copy_files(ftp_client, source_file, source_folder):
+        if check_for_names_to_skip(source_file):
+            return
+        remote_filepath = source_folder + '/' + source_file.name
+        logging.info('Copying ' + remote_filepath + ' to remote odroid')
+        ftp_client.put(source_file.resolve().as_posix(), remote_filepath)
+        return
+
+    def copy_folders(ftp_client, source_subfolder, source_folder):
+        if check_for_names_to_skip(source_subfolder):
+            return
+        remote_folder = source_folder + '/' + source_subfolder.name
+        logging.info(' Creating folder ' + remote_folder + ' on remote odroid')
+        ftp_client.mkdir(remote_folder)
+        
+        for path_object in source_subfolder.iterdir():
+            if path_object.is_file():
+                copy_files(ftp_client, path_object, source_folder)
+            elif path_object.is_dir():
+                copy_folders(ftp_client, path_object, source_folder)
+            else:
+                logging.warning('Path object '  + path_object.name + ' was not copied to remote odroid')
+        return
+
+    # Delete source code folder on remote, preserving log folders
     try:
         cmd = 'find ' + source_folder + ' -mindepth 1 -not -name \'Logs_*\' -delete'
-        print(cmd)
         stdin, stdout, stderr = ssh_client.exec_command(cmd)
         # stdin.write(password + '\n')
     
     except:
         logging.warning('Error in deleting the source folder on the remote machine')
     
-
+    # Copy local source code file to remote (except logs folders)
     try:
         ftp_client=ssh_client.open_sftp()
-        # names_not_to_copy = ['.*', 'Logs_*']
-        # Get list of files and folder to copy to remote
-        root_path = Path('/home')
-        for file_or_folder in root_path.glob('*'):
 
-            if file_or_folder.name.startswith('.') or file_or_folder.name[0:3] == 'Log':
-                continue
-            if file_or_folder.is_file():
-                remote_filepath = source_folder + '/' + file_or_folder.name
-                print(remote_filepath)
-                ftp_client.put(file_or_folder.resolve().as_posix(), remote_filepath)
+        # Loop through contents
+        local_root_path = Path('/home')
+        for path_object in local_root_path.glob('*'):
+
+            if path_object.is_file():
+                copy_files(ftp_client,path_object, source_folder)
             
-            elif file_or_folder.is_dir():
+            elif path_object.is_dir():
+                copy_folders(ftp_client, path_object, source_folder)
 
-                remote_folder = source_folder + '/' + file_or_folder.name
-                print(remote_folder)
-                ftp_client.mkdir(remote_folder)
-                
-                for file_path in file_or_folder.iterdir():
-                    if file_path.is_file():
-                        remote_filepath = source_folder + '/' + file_or_folder.name + '/' + file_path.name
-                        ftp_client.put(file_path.resolve().as_posix(), remote_filepath)
+            else:
+                logging.warning('Path object '  + path_object.name + ' was not copied to remote odroid')
 
         ftp_client.close()
+        
         return True
     except:
         
