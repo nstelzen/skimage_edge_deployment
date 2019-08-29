@@ -240,6 +240,7 @@ def setup_systemd(ssh_client, source_folder, password):
         relative_service_filepath = 'Utilities/skimage_watchdog.service'
         source_filepath = Path(source_filepath).joinpath(relative_service_filepath)
         remote_destination = '/lib/systemd/system'
+        print(service_filepath.as_posix())
         stdin, stdout, stderr = ssh_client.exec_command('sudo cp ' + service_filepath.as_posix() 
                                                         + ' ' + remote_destination)
         stdin.write(password + '\n')
