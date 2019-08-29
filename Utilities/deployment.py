@@ -300,7 +300,7 @@ def compare_time(ssh_client, password):
 
         time_difference = nowish - remote_time_object
 
-        # seconds_off = time_difference.total_seconds()
+        seconds_off = time_difference.total_seconds()
 
         # logger.info('Local odroid time is ' + nowish.strftime('%Y-%m-%dT%H:%M') 
         #             + ' and remote odroid time is ' + remote_time_string )
