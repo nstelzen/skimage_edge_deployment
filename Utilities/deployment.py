@@ -232,14 +232,15 @@ def update_source_code(ssh_client, source_folder, password):
         return False
     
 
-def setup_systemd(ssh_client, password):
+def setup_systemd(ssh_client, source_folder, password):
     # After an update of the source code this resets the systemd service
 
     try:
     # Copy the skimage_watchdog.service file to correct location
         relative_service_filepath = 'Utilities/skimage_watchdog.service'
+        source_filepath = Path(source_filepath).joinpath(relative_service_filepath)
         remote_destination = '/lib/systemd/system'
-        stdin, stdout, stderr = ssh_client.exec_command('sudo cp ' + relative_service_filepath 
+        stdin, stdout, stderr = ssh_client.exec_command('sudo cp ' + service_filepath.as_posix() 
                                                         + ' ' + remote_destination)
         stdin.write(password + '\n')
         # Reload systemd daemon
@@ -377,7 +378,7 @@ def deploy_skimage(**args):
         if do_update_source_folder:
             copy_successful = update_source_code(ssh_client, source_folder, password)
             if copy_successful:
-                setup_systemd(ssh_client, password)
+                setup_systemd(ssh_client, source_folder, password)
                 compare_time(ip_address)
                 write_my_id(ip_address)
                 confirm_skimage_logs_folder(ip_address)
