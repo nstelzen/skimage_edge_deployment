@@ -298,7 +298,7 @@ def compare_time(ssh_client, password):
         print(remote_time_string)
         remote_time_object = datetime.datetime.strptime(remote_time_string, '%Y-%m-%dT%H:%M')
 
-        # time_difference = nowish - remote_time_object
+        time_difference = nowish - remote_time_object
 
         # seconds_off = time_difference.total_seconds()
 
