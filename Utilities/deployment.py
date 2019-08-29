@@ -290,8 +290,8 @@ def compare_time(ssh_client, password):
     # Compare date/time local and remote, warn if difference is too great
     try:
         stdin, stdout, stderr = ssh_client.exec_command('date')
-        print(type(stdout))
-        print(stdout)
+        print(type(stdout.readlines()))
+        print(stdout.readlines())
     except:
         logging.warning('Error in comparing date and time between local and remote odroids')
     return
