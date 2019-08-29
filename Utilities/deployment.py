@@ -232,12 +232,28 @@ def update_source_code(ssh_client, source_folder, password):
         return False
     
 
-def setup_systemd(ssh_client):
+def setup_systemd(ssh_client, password):
     # After an update of the source code this resets the systemd service
+
+    try:
     # Copy the skimage_watchdog.service file to correct location
-    # Reload systemd daemon
-    # Enable systemd service
-    pass
+        relative_service_filepath = 'Utilities/skimage_watchdog.service'
+        remote_destination = '/lib/systemd/system'
+        stdin, stdout, stderr = ssh_client.exec_command('sudo cp ' + relative_service_filepath 
+                                                        + ' ' + remote_destination)
+        stdin.write(password + '\n')
+        # Reload systemd daemon
+        stdin, stdout, stderr = ssh_client.exec_command('sudo systemctl daemon-reload')
+        stdin.write(password + '\n')
+
+        # Enable systemd service
+        stdin, stdout, stderr = ssh_client.exec_command('sudo systemctl enable skimage_watchdog.service')
+        stdin.write(password + '\n')
+    
+    except:
+        logging.warning('Error in configuring skimage_watchdog systemd service!')
+    
+    return
 
 def confirm_skimage_logs_folder(ssh_client, source_folder, skimage_log_link_folder):
     # Check that Logs_SKIMAGE folder exists, if not, create it
