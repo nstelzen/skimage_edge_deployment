@@ -161,7 +161,7 @@ def update_source_code(ssh_client, source_folder, password):
         skip = False # By default do not skip
 
         # Hard code the beginnings of names of files/folder to skip
-        forbidden_beginnings = ['.', 'Logs', '__'] 
+        forbidden_beginnings = ['.', 'Logs', '__', 'semaphore'] 
         for forbidden_beginning in forbidden_beginnings:
             len_forbidden = len(forbidden_beginning)
 
