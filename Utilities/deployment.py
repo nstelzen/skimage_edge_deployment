@@ -16,6 +16,7 @@ import subprocess
 import paramiko
 import logging 
 from pathlib import Path
+import datetime
 
 import python_src.parameter_parser as parameter_parser
 from python_src.startup_checks import check_ping
@@ -289,9 +290,25 @@ def compare_time(ssh_client, password):
     
     # Compare date/time local and remote, warn if difference is too great
     try:
-        stdin, stdout, stderr = ssh_client.exec_command('date')
+        stdin, stdout, stderr = ssh_client.exec_command('date --iso-8601=\'minutes\'')
+        nowish = datetime.datetime.now()
+        remote_time_list = stdout.readlines()
+        remote_time_string = remote_time_list[0]
+        remote_time_string = remote_time_string[0:-6] # Get rid of timezone info 
+        remote_time_object = datetime.datetime.strptime(remote_time_string, '%Y-%m-%dT%H:%M')
 
-        print(stdout.readlines())
+        time_difference = nowish - remote_time_object
+
+        seconds_off = time_difference.total_seconds()
+
+        logger.info('Local odroid time is ' + nowish.strftime('%Y-%m-%dT%H:%M') 
+                    + ' and remote odroid time is ' + remote_time_string )
+        if abs(seconds_off) > 300:
+            logger.warning('Remote odroid clock is different from local odroid clock by ' 
+                           + str(seconds_off) + ', over 5 minutes!')
+        else:
+            logger.info('Remote odroid clock is different from local odroid clock by ' 
+                           + str(seconds_off))
     except:
         logging.warning('Error in comparing date and time between local and remote odroids')
     return
