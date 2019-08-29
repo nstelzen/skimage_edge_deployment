@@ -166,8 +166,8 @@ def update_source_code(ssh_client, source_folder, password):
             len_forbidden = len(forbidden_beginning)
 
             # Check that the beginning of the name of the file/folder doesn't start with a
-            # forbidden beginning  (case insensitive)
-            if path_object.name[0:len_forbidden].lower() == forbidden_beginning.lower():
+            # forbidden beginning 
+            if path_object.name[0:len_forbidden] == forbidden_beginning:
                 skip = True
         return skip
 
