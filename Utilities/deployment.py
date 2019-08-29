@@ -302,8 +302,8 @@ def compare_time(ssh_client, password):
 
         seconds_off = time_difference.total_seconds()
 
-        # logger.info('Local odroid time is ' + nowish.strftime('%Y-%m-%dT%H:%M') 
-        #             + ' and remote odroid time is ' + remote_time_string )
+        logger.info('Local odroid time is ' + nowish.strftime('%Y-%m-%dT%H:%M') 
+                    + ' and remote odroid time is ' + remote_time_string )
         # if abs(seconds_off) > 300:
         #     logger.warning('Remote odroid clock is different from local odroid clock by ' 
         #                    + str(seconds_off) + ', over 5 minutes!')
