@@ -377,7 +377,7 @@ def deploy_skimage(**args):
         if do_update_source_folder:
             copy_successful = update_source_code(ssh_client, source_folder, password)
             if copy_successful:
-                setup_systemd(ssh_client, source_folder, password)
+                setup_systemd(ssh_client, password)
                 compare_time(ip_address)
                 write_my_id(ip_address)
                 confirm_skimage_logs_folder(ip_address)
