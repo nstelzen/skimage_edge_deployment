@@ -306,11 +306,11 @@ def compare_time(ssh_client, password):
                     + ' and remote odroid time is ' + remote_time_string )
         if abs(seconds_off) > 300:
             logging.warning('Remote odroid clock is different from local odroid clock by ' 
-                           + str(seconds_off) + ', over 5 minutes!')
+                           + str(seconds_off) + ' seconds, over 5 minutes!')
 
         else:
             logging.info('Remote odroid clock is different from local odroid clock by ' 
-                           + str(seconds_off))
+                           + str(seconds_off) + ' seconds')
     except:
         logging.warning('Error in comparing date and time between local and remote odroids')
     return
