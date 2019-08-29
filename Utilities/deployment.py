@@ -296,7 +296,7 @@ def compare_time(ssh_client, password):
         remote_time_string = remote_time_list[0]
         remote_time_string = remote_time_string[0:-7] # Get rid of timezone info 
         print(remote_time_string)
-        remote_time_object = datetime.datetime.strptime(remote_time_string, '%Y-%m-%dT%H:%M%S')
+        remote_time_object = datetime.datetime.strptime(remote_time_string, '%Y-%m-%dT%H:%M:%S')
 
         time_difference = nowish - remote_time_object
 
