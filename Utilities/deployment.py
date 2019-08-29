@@ -155,6 +155,7 @@ def update_source_code(ssh_client, source_folder, password):
 
     def copy_files(ftp_client, source_file, source_folder):
         if check_for_names_to_skip(source_file):
+            logging.info('Skipping ' + source_file.name )
             return
         remote_filepath = source_folder + '/' + source_file.name
         logging.info('Copying ' + remote_filepath + ' to remote odroid')
@@ -163,6 +164,7 @@ def update_source_code(ssh_client, source_folder, password):
 
     def copy_folders(ftp_client, source_subfolder, source_folder):
         if check_for_names_to_skip(source_subfolder):
+            logging.info('Skipping ' + source_subfolder.name )
             return
         remote_folder = source_folder + '/' + source_subfolder.name
         logging.info(' Creating folder ' + remote_folder + ' on remote odroid')
@@ -204,7 +206,7 @@ def update_source_code(ssh_client, source_folder, password):
                 logging.warning('Path object '  + path_object.name + ' was not copied to remote odroid')
 
         ftp_client.close()
-        
+
         return True
     except:
         
