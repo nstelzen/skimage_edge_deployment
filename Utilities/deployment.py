@@ -294,23 +294,23 @@ def compare_time(ssh_client, password):
         nowish = datetime.datetime.now()
         remote_time_list = stdout.readlines()
         remote_time_string = remote_time_list[0]
-        remote_time_string = remote_time_string[0:-6] # Get rid of timezone info 
+        remote_time_string = remote_time_string[0:-7] # Get rid of timezone info 
         print(remote_time_string)
-        # remote_time_object = datetime.datetime.strptime(remote_time_string, '%Y-%m-%dT%H:%M')
+        remote_time_object = datetime.datetime.strptime(remote_time_string, '%Y-%m-%dT%H:%M')
 
-        # time_difference = nowish - remote_time_object
+        time_difference = nowish - remote_time_object
 
-        # seconds_off = time_difference.total_seconds()
+        seconds_off = time_difference.total_seconds()
 
-        # logger.info('Local odroid time is ' + nowish.strftime('%Y-%m-%dT%H:%M') 
-        #             + ' and remote odroid time is ' + remote_time_string )
-        # if abs(seconds_off) > 300:
-        #     logger.warning('Remote odroid clock is different from local odroid clock by ' 
-        #                    + str(seconds_off) + ', over 5 minutes!')
+        logger.info('Local odroid time is ' + nowish.strftime('%Y-%m-%dT%H:%M') 
+                    + ' and remote odroid time is ' + remote_time_string )
+        if abs(seconds_off) > 300:
+            logger.warning('Remote odroid clock is different from local odroid clock by ' 
+                           + str(seconds_off) + ', over 5 minutes!')
 
-        # else:
-        #     logger.info('Remote odroid clock is different from local odroid clock by ' 
-        #                    + str(seconds_off))
+        else:
+            logger.info('Remote odroid clock is different from local odroid clock by ' 
+                           + str(seconds_off))
     except:
         logging.warning('Error in comparing date and time between local and remote odroids')
     return
