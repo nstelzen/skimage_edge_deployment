@@ -1,18 +1,23 @@
-rm -R /home/odroid/skimage_edge_deployment
+#!/usr/bin/env bash"
+root_dir="/home/odroid"
+skimage_docker_image="nickstelzenmuller/skimage:ARM_prod"
+
+echo "Attempting to remove ${root_dir}/skimage_deployment"
+rm -R ${root_dir}/skimage_deployment
 
 # clone Github repo
 git clone https://github.com/nstelzen/skimage_edge_deployment.git
 
 # Allow watchdog.sh to be executable 
-chmod +x /home/odroid/skimage_edge_deployment/skimage.sh
+chmod +x ${root_dir}/skimage_edge_deployment/skimage.sh
 
 # Set time zone
 sudo timedatectl set-timezone Europe/Paris
 
 # Install docker
-sudo apt-get remove docker docker-engine docker.io containerd runc
+sudo apt-get -y remove docker docker-engine docker.io containerd runc
 
-sudo apt-get update
+sudo apt-get -y update
 
 sudo apt-get install \
     apt-transport-https \
@@ -28,9 +33,9 @@ sudo add-apt-repository \
    $(lsb_release -cs) \
    stable"
 
-sudo apt-get update
+sudo apt-get -y update
 
-sudo apt-get install docker-ce docker-ce-cli containerd.io
+sudo apt-get -y install docker-ce docker-ce-cli containerd.io
 
 sudo groupadd docker
 
@@ -41,10 +46,10 @@ newgrp docker
 # Pull Docker image
 
 # Install docker-compose
-sudo apt install docker-compose
+sudo apt-get -y install docker-compose
 
 # Install inotify-tools
-sudo apt install inotify-tools
+sudo apt-get -y install inotify-tools
 
 # Set up link to skimage logs folder
 mkdir -p /home/odroid/skimage_edge_deployment/Logs_SKIMAGE 
@@ -56,8 +61,6 @@ sudo cp /home/odroid/skimage_edge_deployment/Utilities/skimage_watchdog.service 
 # Enable service
 sudo systemctl daemon-reload
 sudo systemctl enable skimage_watchdog.service
-sudo systemctl start skimage_watchdog.service
-
 
 # Reboot
 sudo reboot
