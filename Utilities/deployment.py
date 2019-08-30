@@ -295,15 +295,15 @@ def compare_time(ssh_client, password):
         remote_time_list = stdout.readlines()
         remote_time_string = remote_time_list[0]
         remote_time_string = remote_time_string[0:-7] # Get rid of timezone info 
-        print(remote_time_string)
+
         remote_time_object = datetime.datetime.strptime(remote_time_string, '%Y-%m-%dT%H:%M:%S')
 
         time_difference = nowish - remote_time_object
 
         seconds_off = time_difference.total_seconds()
 
-        logging.info('Local odroid time is ' + nowish.strftime('%Y-%m-%dT%H:%M:%S') 
-                    + ' and remote odroid time is ' + remote_time_string )
+        logging.info('Local odroid time is ' + nowish.strftime('%Y-%m-%dT%H:%M:%S')) 
+        logging.info('Remote odroid time is ' + remote_time_string )
         if abs(seconds_off) > 300:
             logging.warning('Remote odroid clock is different from local odroid clock by ' 
                            + str(seconds_off) + ' seconds, over 5 minutes!')
@@ -320,9 +320,11 @@ def update_docker_image(ssh_client):
     # Load docker image on remote
     pass
 
-def reboot_remote(ssh_client):
+def reboot_remote(ssh_client, password):
     # Reboot remote odroid
-    pass
+    stdin, stdout, stderr = ssh_client.exec_command('sudo reboot')
+    stdin.write(password + '\n')
+    return
 
 def fresh_install(ssh_client):
     # A fresh install means the remote odroid has simply the factory OS
@@ -421,7 +423,7 @@ def deploy_skimage(**args):
                 compare_time(ssh_client, password)
                 write_my_id(ssh_client, source_folder, ip_address)
                 confirm_skimage_logs_folder(ssh_client, source_folder, skimage_log_link_folder)
-                reboot_remote(ip_address)
+                reboot_remote(ssh_client, password)
             else:
                 continue
 
@@ -431,7 +433,7 @@ def deploy_skimage(**args):
                 compare_time(ssh_client, password)
                 write_my_id(ssh_client, source_folder, ip_address)
                 confirm_skimage_logs_folder(ssh_client, source_folder, skimage_log_link_folder)
-                reboot_remote(ip_address)
+                reboot_remote(ssh_client, password)
             else: 
                 continue
 
