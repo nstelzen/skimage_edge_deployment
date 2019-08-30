@@ -45,7 +45,7 @@ sudo usermod -aG docker $USER
 newgrp docker 
 
 # Pull Docker image
-
+docker pull ${skimage_docker_image}
 # Install docker-compose
 sudo apt-get -y install docker-compose
 
