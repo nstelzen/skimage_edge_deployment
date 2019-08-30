@@ -1,4 +1,4 @@
-#!/usr/bin/env bash"
+#!/usr/bin/env bash
 root_dir="/home/odroid"
 skimage_docker_image="nickstelzenmuller/skimage:ARM_prod"
 
