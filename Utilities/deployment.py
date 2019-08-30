@@ -335,12 +335,13 @@ def fresh_install(ssh_client, source_folder, password):
     # We require that the remote odroid have an internet connection to 
     # do a fresh install
  
-    # stdin, stdout, stderr = ssh_client.exec_command('sudo rm -rf /home/odroid/skimage_edge_deployment', get_pty=True)
-    # stdin.write(password + '\n')
+    stdin, stdout, stderr = ssh_client.exec_command('sudo rm -rf /home/odroid/skimage_edge_deployment', get_pty=True)
+    stdin.write(password + '\n')
+
+    stdin, stdout, stderr = ssh_client.exec_command('mkdir -p /home/odroid/skimage_edge_deployment', get_pty=True)   
 
     ftp_client=ssh_client.open_sftp()
-    # ftp_client.mkdir('/home/odroid/skimage_edge_deployment')
-    # ftp_client.mkdir('/home/odroid/skimage_edge_deployment/Utilities')
+
     ftp_client.put('/home/Utilities/install.sh', '/home/odroid/skimage_edge_deployment/Utilities/install.sh')
     ftp_client.close()
 
