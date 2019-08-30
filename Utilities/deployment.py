@@ -330,14 +330,24 @@ def reboot_remote(ssh_client, password):
         logging.warning('Failed to reboot remote odroid')
     return
 
-def fresh_install(ssh_client):
+def fresh_install(ssh_client, source_folder, password,):
     # A fresh install means the remote odroid has simply the factory OS
     # We require that the remote odroid have an internet connection to 
     # do a fresh install
+    stdin, stdout, stderr = ssh_client.exec_command('sudo rm -rf ' + source_folder)
+    stdin.write(password + '\n')
 
+    ftp_client=ssh_client.open_sftp()
+    ftp_client.mkdir(source_folder + '/Utilities')
+    ftp_client.put('/home/Utilities/install.sh', source_folder + '/Utilities/install.sh')
+    ftp_client.close()
+
+    stdin, stdout, stderr = ssh_client.exec_command('chmod +x ' + source_folder + '/Utilities/install.sh')
+    stdin, stdout, stderr = ssh_client.exec_command('.' + source_folder + '/Utilities/install.sh')
+    logging.info(stdout.readlines())
     # Check internet connection
     # Run pre-setup.sh to install the docker engine, pull the source code from github, etc.
-    pass
+    return
 
 def deploy_skimage(**args):
     # Main update script
