@@ -45,6 +45,8 @@ sudo usermod -aG docker $USER
 
 
 # Remove all docker images
+docker stop $(docker ps -a -q)
+docker rm $(docker ps -a -q)
 docker rmi $(docker images)
 
 # Pull Docker image
