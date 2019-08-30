@@ -113,7 +113,7 @@ def copy_parameter_file(ssh_client, source_folder, password):
     parameter_pickle_filepath = source_folder + '/data/skimage_parameters.pickle'
     try:
         stdin, stdout, stderr = ssh_client.exec_command('sudo rm -f ' + parameter_filepath 
-                                                + ' ' + parameter_pickle_filepath)
+                                                + ' ' + parameter_pickle_filepath, get_pty=True)
         stdin.write(password + '\n')
     
     except:
@@ -337,20 +337,18 @@ def fresh_install(ssh_client, source_folder, password):
  
     stdin, stdout, stderr = ssh_client.exec_command('sudo rm -rf /home/odroid/skimage_edge_deployment', get_pty=True)
     stdin.write(password + '\n')
-    print(stdout.readlines())
-    print(stderr.readlines())
-    # ftp_client=ssh_client.open_sftp()
-    # ftp_client.mkdir(source_folder)
-    # ftp_client.mkdir(source_folder + '/Utilities')
-    # ftp_client.put('/home/Utilities/install.sh', source_folder + '/Utilities/install.sh')
-    # ftp_client.close()
 
-    # stdin, stdout, stderr = ssh_client.exec_command('chmod +x ' + source_folder + '/Utilities/install.sh')
-    # stdin, stdout, stderr = ssh_client.exec_command('.' + source_folder + '/Utilities/install.sh')
-    # stdin.write(password + '\n')
-    # logging.info(stdout.readlines())
-    # Check internet connection
-    # Run pre-setup.sh to install the docker engine, pull the source code from github, etc.
+    ftp_client=ssh_client.open_sftp()
+    ftp_client.mkdir(source_folder)
+    ftp_client.mkdir(source_folder + '/Utilities')
+    ftp_client.put('/home/Utilities/install.sh', source_folder + '/Utilities/install.sh')
+    ftp_client.close()
+
+    stdin, stdout, stderr = ssh_client.exec_command('chmod +x ' + source_folder + '/Utilities/install.sh', get_pty=True)
+    stdin, stdout, stderr = ssh_client.exec_command('.' + source_folder + '/Utilities/install.sh', get_pty=True)
+    stdin.write(password + '\n')
+    logging.info(stdout.readlines())
+
     return
 
 def deploy_skimage(**args):
