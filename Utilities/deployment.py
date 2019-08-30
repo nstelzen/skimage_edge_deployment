@@ -339,8 +339,8 @@ def fresh_install(ssh_client, source_folder, password):
     stdin.write(password + '\n')
 
     ftp_client=ssh_client.open_sftp()
-    ftp_client.mkdir('/home/odroid/skimage_edge_deployment')
-    ftp_client.mkdir('/home/odroid/skimage_edge_deployment/Utilities')
+    # ftp_client.mkdir('/home/odroid/skimage_edge_deployment')
+    # ftp_client.mkdir('/home/odroid/skimage_edge_deployment/Utilities')
     ftp_client.put('/home/Utilities/install.sh', '/home/odroid/skimage_edge_deployment/Utilities/install.sh')
     ftp_client.close()
 
