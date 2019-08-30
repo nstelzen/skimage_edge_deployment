@@ -1,3 +1,5 @@
+rm -R /home/odroid/skimage_edge_deployment
+
 # clone Github repo
 git clone https://github.com/nstelzen/skimage_edge_deployment.git
 

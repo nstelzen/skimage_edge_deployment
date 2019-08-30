@@ -322,11 +322,12 @@ def update_docker_image(ssh_client):
 
 def reboot_remote(ssh_client, password):
     # Reboot remote odroid
-    logging.info('Reboot remote odroid')
-    stdin, stdout, stderr = ssh_client.exec_command('sudo reboot', get_pty=True)
-    stdin.write(password + '\n')
-    print(stdout.readlines())
-    print(stderr.readlines())
+    try:
+        logging.info('Reboot remote odroid')
+        stdin, stdout, stderr = ssh_client.exec_command('sudo reboot', get_pty=True)
+        stdin.write(password + '\n')
+    except:
+        logging.warning('Failed to reboot remote odroid')
     return
 
 def fresh_install(ssh_client):
