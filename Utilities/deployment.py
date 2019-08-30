@@ -323,7 +323,7 @@ def update_docker_image(ssh_client):
 def reboot_remote(ssh_client, password):
     # Reboot remote odroid
     logging.info('Reboot remote odroid')
-    stdin, stdout, stderr = ssh_client.exec_command('sudo reboot')
+    stdin, stdout, stderr = ssh_client.exec_command('sudo -t reboot')
     stdin.write(password + '\n')
     print(stdout.readlines())
     print(stderr.readlines())
