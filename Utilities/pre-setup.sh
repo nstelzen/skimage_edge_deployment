@@ -2,8 +2,8 @@
 root_dir="/home/odroid"
 skimage_docker_image="nickstelzenmuller/skimage:ARM_prod"
 
-echo "Attempting to remove ${root_dir}/skimage_deployment"
-rm -R ${root_dir}/skimage_deployment
+echo "Attempting to remove ${root_dir}/skimage_edge_deployment"
+rm -R ${root_dir}/skimage_edge_deployment
 
 # clone Github repo
 git clone https://github.com/nstelzen/skimage_edge_deployment.git
