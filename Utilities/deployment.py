@@ -341,7 +341,7 @@ def fresh_install(ssh_client, source_folder, password):
     ftp_client=ssh_client.open_sftp()
     ftp_client.mkdir(source_folder)
     ftp_client.mkdir(source_folder + '/Utilities')
-    ftp_client.put('/home/Utilities/install.sh', source_folder + '/Utilities/install.sh')
+    ftp_client.put('/home/Utilities/install.sh', source_folder + '/Utilities')
     ftp_client.close()
 
     stdin, stdout, stderr = ssh_client.exec_command('chmod +x ' + source_folder + '/Utilities/install.sh', get_pty=True)
