@@ -338,6 +338,7 @@ def fresh_install(ssh_client, source_folder, password):
     stdin.write(password + '\n')
 
     ftp_client=ssh_client.open_sftp()
+    ftp_client.mkdir(source_folder)
     ftp_client.mkdir(source_folder + '/Utilities')
     ftp_client.put('/home/Utilities/install.sh', source_folder + '/Utilities/install.sh')
     ftp_client.close()
