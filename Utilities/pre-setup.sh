@@ -42,7 +42,7 @@ sudo groupadd docker
 
 sudo usermod -aG docker $USER
 
-newgrp docker 
+# newgrp docker 
 
 # Pull Docker image
 docker pull ${skimage_docker_image}
